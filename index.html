@@ -185,8 +185,8 @@ const STATUS_TYPES = [
     localStorage.setItem('r_notes_v9', JSON.stringify(notes));
     localStorage.setItem('r_shop_v9', shoppingList);
     localStorage.setItem('r_current_day_v9', ramadanDay.toString());
-    
-localStorage.setItem('r_lang_v9', lang);
+    localStorage.setItem('r_last_module_v9', activeModule);
+    localStorage.setItem('r_lang_v9', lang);
     localStorage.setItem('r_meal_start_v9', mealStartDay.toString());
 }, [meals, activities, prePlan, notes, shoppingList, ramadanDay, activeModule, mealStartDay, lang]);
 
