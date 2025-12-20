@@ -301,7 +301,7 @@
             </div>
             {['Suhoor', 'Iftar'].map((label, i) => (
                 <div key={label} className="group">
-                    <p className="text-[14px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
+                    <p className="text-[9px] font-bold text-sage-primary/40 uppercase mb-2">{label}</p>
                     <p className="text-[14px] text-text-main font-light leading-relaxed">
                         {meals[ramadanDay-1].adult[i].filter(x => x).join(' • ') || "—"}
                     </p>
@@ -316,7 +316,7 @@
             </div>
             {['Breakfast', 'Lunch', 'Dinner'].map((label, i) => (
                 <div key={label} className="group">
-                    <p className="text-[14px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
+                    <p className="text-[9px] font-bold text-sage-primary/40 uppercase mb-2">{label}</p>
                     <p className="text-[14px] text-text-main font-light leading-relaxed">
                         {meals[ramadanDay-1].kids[i].filter(x => x).join(' • ') || "—"}
                     </p>
