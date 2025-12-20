@@ -386,7 +386,6 @@
         <table className="w-full border-collapse table-fixed">
             <thead>
                 <tr className="bg-sage-bg/30">
-                    {/* Changed text-left to text-center */}
                     <th className="px-6 py-4 text-right text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-16">Day</th>
                     <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">Adults</th>
                     <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[42%]">Kids</th>
@@ -397,7 +396,6 @@
                     const dIdx = day.id - 1;
                     return (
                         <tr key={day.id} className="hover:bg-sage-bg/10 transition-colors">
-                            {/* Changed text-right to text-center and ensured vertical alignment */}
                             <td className="px-6 py-4 align-top text-center w-16">
                                 <span className="text-lg font-light text-sage-dark opacity-40">{day.id}</span>
                             </td>
@@ -421,7 +419,7 @@
             e.stopPropagation(); 
             addMealItem(dIdx, 'adult', sIdx); 
         }} 
-        className="text-[#b5ada8] text-[11px] font-bold"
+        className="text-[11px] font-bold text-[#b5ada8]"
     >
         +
     </button>
