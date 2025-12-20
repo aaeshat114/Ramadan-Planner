@@ -82,14 +82,6 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        const STATUS_TYPES = [
-            { id: 'ready', label: 'Ready', color: '#638545', icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 13l4 4L19 7" /></svg>) },
-            { id: 'buy', label: 'Buy', color: '#bc7e7e', icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>) },
-            { id: 'find', label: 'Find', color: '#768eb2', icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>) },
-            { id: 'prepare', label: 'Prep', color: '#867699', icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>) },
-            { id: 'print', label: 'Print', color: '#b29369', icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>) }
-        ];
-
         const generate30Days = () => Array.from({ length: 30 }, (_, i) => ({
             id: i + 1, adult: [[], []], kids: [[], [], []]
         }));
@@ -98,7 +90,63 @@
             day: 60 - i, task: "", completed: false
         }));
 
+const translations = {
+    en: {
+        today: "Today", meals: "Meals", activities: "Activities", preplan: "Preplan", notes: "Notes",
+        adults: "Adults", kids: "Kids", suhoor: "Suhoor", iftar: "Iftar",
+        breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner",
+        shopping: "Shopping List", weekStart: "Week Starting", day: "Day",
+        newAct: "New activity name...", addSupply: "Add a supply...",
+        quote: "So eat from the lawful and good things Allah provided for you, and be thankful for Allah’s favor - if it is Him that you worship. (16:114)",
+        status: { ready: "Ready", buy: "Buy", find: "Find", prepare: "Prep", print: "Print" }
+    },
+    cz: {
+        today: "Dnešek", meals: "Jídelníček", activities: "Aktivity", preplan: "Příprava", notes: "Zápisník",
+        adults: "Dospělí", kids: "Děti", suhoor: "Suhúr", iftar: "Iftár",
+        breakfast: "Snídaně", lunch: "Oběd", dinner: "Večeře",
+        shopping: "Nákupní seznam", weekStart: "Týden od dne", day: "Den",
+        newAct: "Název aktivity...", addSupply: "Přidat potřebu...",
+        quote: "Pojídejte ze všeho, co Alláh vám uštědřil jako dovolené a výtečné, a buďte vděční za dobrodiní Alláhovo, jestliže je to vskutku On, jehož uctíváte. (16:114)",
+        status: { ready: "Hotovo", buy: "Koupit", find: "Najít", prepare: "Připravit", print: "Vytisknout" }
+    }
+};
+
         const App = () => {
+            const [lang, setLang] = useState(() => localStorage.getItem('r_lang_v9') || 'en');
+            const t = translations[lang];
+            const txt = (en, cz) => (lang === 'en' ? en : cz);
+const STATUS_TYPES = [
+    { 
+        id: 'ready', 
+        label: lang === 'cz' ? 'Hotovo' : 'Ready', 
+        color: '#638545', 
+        icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 13l4 4L19 7" /></svg>) 
+    },
+    { 
+        id: 'buy', 
+        label: lang === 'cz' ? 'Koupit' : 'Buy', 
+        color: '#bc7e7e', 
+        icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>) 
+    },
+    { 
+        id: 'find', 
+        label: lang === 'cz' ? 'Najít' : 'Find', 
+        color: '#768eb2', 
+        icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>) 
+    },
+    { 
+        id: 'prepare', 
+        label: lang === 'cz' ? 'Připravit' : 'Prep', 
+        color: '#867699', 
+        icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>) 
+    },
+    { 
+        id: 'print', 
+        label: lang === 'cz' ? 'Vytisknout' : 'Print', 
+        color: '#b29369', 
+        icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>) 
+    }
+];
             const [activeModule, setActiveModule] = useState(() => localStorage.getItem('r_last_module_v9') || 'today');
             const [ramadanDay, setRamadanDay] = useState(() => parseInt(localStorage.getItem('r_current_day_v9')) || 1);
             const [mealStartDay, setMealStartDay] = useState(() => parseInt(localStorage.getItem('r_meal_start_v9')) || 1);
@@ -120,9 +168,10 @@
     localStorage.setItem('r_notes_v9', JSON.stringify(notes));
     localStorage.setItem('r_shop_v9', shoppingList);
     localStorage.setItem('r_current_day_v9', ramadanDay.toString());
-    // Add this line:
+    
+localStorage.setItem('r_lang_v9', lang);
     localStorage.setItem('r_meal_start_v9', mealStartDay.toString());
-}, [meals, activities, prePlan, notes, shoppingList, ramadanDay, activeModule, mealStartDay]);
+}, [meals, activities, prePlan, notes, shoppingList, ramadanDay, activeModule, mealStartDay, lang]);
 
             const addMealItem = (dIdx, type, sIdx) => {
                 const n = [...meals];
@@ -181,22 +230,39 @@
                 <div className="w-full">
                     
 <nav className="nav-blur px-4 pt-8 flex flex-col items-center gap-4">
-    <div className="flex flex-col items-center">
-        <span className="text-[20px] font-bold tracking-[0.3em] text-[#7c9082] uppercase">Ramadan 1447</span>
+    <div className="flex flex-col items-center relative w-full max-w-md">
+        {/* Main Title */}
+        <span className="text-[20px] font-bold tracking-[0.3em] text-[#7c9082] uppercase">
+            {txt("Ramadan 1447", "Ramadán 1447")}
+        </span>
+
+        {/* Language Toggle - Positioned to the right */}
+        <button 
+            onClick={() => setLang(lang === 'en' ? 'cz' : 'en')}
+            className="absolute right-0 top-1/2 -translate-y-1/2 text-[10px] font-bold tracking-widest text-sage-primary opacity-60 hover:opacity-100 transition-opacity border border-sage-primary/20 px-2 py-1 rounded-md"
+        >
+            {lang === 'en' ? 'CZ' : 'EN'}
+        </button>
     </div>
     
     <div className="grid grid-cols-6 gap-4 bg-sage/40 p-1.5 rounded-[24px] border border-sage-primary/10 w-full max-w-md">
-        {['today', 'meals', 'activities', 'preplan', 'notes'].map((m, idx) => (
+        {[
+            { id: 'today', en: 'Today', cz: 'Dnešek' },
+            { id: 'meals', en: 'Meals', cz: 'Jídelníček' },
+            { id: 'activities', en: 'Activities', cz: 'Aktivity' },
+            { id: 'preplan', en: 'Preplan', cz: 'Příprava' },
+            { id: 'notes', en: 'Notes', cz: 'Zápisník' }
+        ].map((m, idx) => (
             <button 
-                key={m}
-                onClick={() => setActiveModule(m)}
+                key={m.id}
+                onClick={() => setActiveModule(m.id)}
                 className={`
                     px-2 py-2.5 rounded-full text-[10px] font-bold tracking-widest uppercase transition-all
-                    ${activeModule === m ? 'bg-[#d1dad2] text-[var(--text-muted)]' : 'text-sage-primary hover:bg-[var(--sage-card)]'}
+                    ${activeModule === m.id ? 'bg-[#d1dad2] text-[var(--text-muted)]' : 'text-sage-primary hover:bg-[var(--sage-card)]'}
                     ${idx < 3 ? 'col-span-2' : 'col-span-3'}
                 `}
             >
-                {m}
+                {txt(m.en, m.cz)}
             </button>
         ))}
     </div>
@@ -286,7 +352,7 @@
 <div className="pill-card p-10">
     <div className="flex items-center gap-4 mb-4">
         <div className="h-[1px] flex-grow bg-sage-primary/10"></div>
-        <span className="text-[14px] font-bold tracking-[0.3em] text-sage-primary uppercase">Meal plan</span>
+        <span className="text-[14px] font-bold tracking-[0.3em] text-sage-primary uppercase">{txt("Meal plan", "Jídelníček")}</span>
         <div className="h-[1px] flex-grow bg-sage-primary/10"></div>
     </div>
 
@@ -297,9 +363,9 @@
         {/* Adults Column */}
         <div className="space-y-6">
             <div className="flex flex-col items-start gap-1">
-                <span className="text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">Adults</span>
+                <span className="text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">{txt("Adults", "Dospělí")}</span>
             </div>
-            {['Suhoor', 'Iftar'].map((label, i) => (
+            {[txt("Suhoor", "Suhúr"), txt("Iftar", "Iftár")].map((label, i) => (
                 <div key={label} className="group">
                     <p className="text-[14px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
                     <p className="text-[14px] text-text-main font-light leading-relaxed">
@@ -312,9 +378,9 @@
         {/* Kids Column */}
         <div className="space-y-6">
             <div className="flex flex-col items-start gap-1">
-                <span className="text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">Kids</span>
+                <span className="text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">{txt("Kids", "Děti")}</span>
             </div>
-            {['Breakfast', 'Lunch', 'Dinner'].map((label, i) => (
+            {[txt("Breakfast", "Snídaně"), txt("Lunch", "Oběd"), txt("Dinner", "Večeře")].map((label, i) => (
                 <div key={label} className="group">
                     <p className="text-[14px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
                     <p className="text-[14px] text-text-main font-light leading-relaxed">
@@ -347,9 +413,9 @@
         <div className="flex flex-col md:flex-row gap-3 items-start">
             <div className="pill-card p-4 flex items-center gap-3 flex-grow">
                 <div className="flex flex-col">
-                    <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase">Week Starting</span>
+                    <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase">{txt("Week Starting", "Týden od dne")}</span>
                     <div className="flex items-center gap-2">
-                        <span className="text-sm font-light text-text-muted">Day</span>
+                        <span className="text-sm font-light text-text-muted">{txt("Day", "Den")}</span>
                         <input 
                             type="text" 
                             inputMode="numeric" 
@@ -362,17 +428,20 @@
                 </div>
                 <div className="h-10 w-[1px] bg-sage-primary/10"></div>
                 <p className="text-xs text-text-muted text-justify leading-relaxed max-w-[200px] font-light italic">
-                    So eat from the lawful and good things Allah provided for you, and be thankful for Allah’s favor - if it is Him that you worship.
-<span className="block text-right">Quran 16:114</span>
+                   {txt(
+"So eat from the lawful and good things Allah provided for you, and be thankful for Allah’s favor - if it is Him that you worship.",
+"Pojídejte ze všeho, co Alláh vám uštědřil jako dovolené a výtečné, a buďte vděční za dobrodiní Alláhovo, jestliže je to vskutku On, jehož uctíváte."
+)}
+<span className="block text-right">{txt("Quran 16:114","Korán 16:114")}</span>
                 </p>                
             </div>
 
             <div className="w-full md:w-80 group">
                 <div className="pill-card p-4 bg-sage-bg/30 hover:shadow-md transition-shadow">
-                    <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase mb-3 block">Shopping List</span>
+                    <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase mb-3 block">{txt("Shopping List", "Nákupní seznam")}</span>
                     <textarea 
                         className="w-full bg-[#f0f3f0] text-sm font-light text-text-main outline-none min-h-[100px] placeholder-[#b5ada8] resize-none" 
-                        placeholder="Add items needed..." 
+                        placeholder={txt("Add items needed...", "Přidej položky...")} 
                         value={shoppingList} 
                         onChange={(e) => setShoppingList(e.target.value)} 
                     />
@@ -386,9 +455,9 @@
         <table className="w-full border-collapse table-fixed">
             <thead>
                 <tr className="bg-sage-bg/30">
-                    <th className="px-6 py-4 text-right text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-16">Day</th>
-                    <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">Adults</th>
-                    <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[42%]">Kids</th>
+                    <th className="px-6 py-4 text-right text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-16">{txt("Day", "Den")}</th>
+                    <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">{txt("Adults", "Dospělí")}</th>
+                    <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[42%]">{txt("Kids", "Děti")}</th>
                 </tr>
             </thead>
             <tbody className="">
@@ -402,7 +471,7 @@
                             
                             {/* Adult Section */}
                             <td className="px-6 py-4 align-top space-y-4">
-                                {['Suhoor', 'Iftar'].map((label, sIdx) => (
+                                {[txt("Suhoor", "Suhúr"), txt("Iftar", "Iftár")].map((label, sIdx) => (
                                     <div 
                                         key={label} 
                                         className="space-y-2 min-h-[60px] group"
@@ -465,7 +534,7 @@
 
                             {/* Kids Section */}
                             <td className="px-6 py-4 align-top space-y-4 bg-sage-bg/5">
-                                {['Breakfast', 'Lunch', 'Dinner'].map((label, sIdx) => (
+                                {[txt("Breakfast", "Snídaně"), txt("Lunch", "Oběd"), txt("Dinner", "Večeře")].map((label, sIdx) => (
                                     <div 
                                         key={label} 
                                         className="space-y-2 min-h-[60px]"
