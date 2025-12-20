@@ -297,12 +297,12 @@
         {/* Adults Column */}
         <div className="space-y-6">
             <div className="flex flex-col items-start gap-1">
-                <span className="text-[10px] font-black text-sage-primary/40 uppercase tracking-[0.2em]">Adults</span>
+                <span className="text-[14px] font-black text-sage-primary/40 uppercase tracking-[0.2em]">Adults</span>
             </div>
             {['Suhoor', 'Iftar'].map((label, i) => (
                 <div key={label} className="group">
-                    <p className="text-[12px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
-                    <p className="text-[12px] text-text-main font-light leading-relaxed">
+                    <p className="text-[14px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
+                    <p className="text-[14px] text-text-main font-light leading-relaxed">
                         {meals[ramadanDay-1].adult[i].filter(x => x).join(' • ') || "—"}
                     </p>
                 </div>
@@ -312,12 +312,12 @@
         {/* Kids Column */}
         <div className="space-y-6">
             <div className="flex flex-col items-start gap-1">
-                <span className="text-[12px] font-black text-sage-primary/40 uppercase tracking-[0.2em]">Kids</span>
+                <span className="text-[14px] font-black text-sage-primary/40 uppercase tracking-[0.2em]">Kids</span>
             </div>
             {['Breakfast', 'Lunch', 'Dinner'].map((label, i) => (
                 <div key={label} className="group">
-                    <p className="text-[12px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
-                    <p className="text-[12px] text-text-main font-light leading-relaxed">
+                    <p className="text-[14px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
+                    <p className="text-[14px] text-text-main font-light leading-relaxed">
                         {meals[ramadanDay-1].kids[i].filter(x => x).join(' • ') || "—"}
                     </p>
                 </div>
