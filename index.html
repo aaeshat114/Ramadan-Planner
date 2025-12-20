@@ -484,30 +484,116 @@
                                                         }
                                                     }}
                                                 />
-                                                <button 
-                                                    onClick={(e) => { 
-                                                        e.stopPropagation(); 
-                                                        const n = [...meals]; 
-                                                        n[dIdx].kids[sIdx].splice(iIdx, 1); 
-                                                        setMeals(n); 
-                                                    }} 
-                                                    className="text-[#b5ada8]"
-                                                >
-                                                    ×
-                                                </button>
+{/* MODULE: MEALS */}
+{activeModule === 'meals' && (
+    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="flex flex-col md:flex-row gap-3 items-start">
+            <div className="pill-card p-4 flex items-center gap-3 flex-grow">
+                <div className="flex flex-col">
+                    <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase">Week Starting</span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-light text-text-muted">Day</span>
+                        <input 
+                            type="text" 
+                            inputMode="numeric" 
+                            value={mealStartDay === 0 ? "" : mealStartDay} 
+                            onChange={(e) => { const v = e.target.value; setMealStartDay(v === "" ? 0 : Math.min(24, parseInt(v) || 0)); }}
+                            onBlur={() => setMealStartDay(Math.max(1, mealStartDay || 1))}
+                            className="w-10 text-lg font-medium text-sage-dark bg-transparent border-b border-sage-primary/20 focus:outline-none" 
+                        />
+                    </div>
+                </div>
+                <div className="h-10 w-[1px] bg-sage-primary/10"></div>
+                <p className="text-xs text-text-muted text-justify leading-relaxed max-w-[200px] font-light italic">
+                    So eat from the lawful and good things Allah provided for you... <span className="block text-right">Quran 16:114</span>
+                </p>                
+            </div>
+
+            <div className="w-full md:w-80 group">
+                <div className="pill-card p-4 bg-sage-bg/30">
+                    <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase mb-3 block">Shopping List</span>
+                    <textarea 
+                        className="w-full bg-transparent text-sm font-light text-text-main outline-none min-h-[100px] resize-none" 
+                        placeholder="Add items..." 
+                        value={shoppingList} 
+                        onChange={(e) => setShoppingList(e.target.value)} 
+                    />
+                </div>
+            </div>
+        </div>
+
+        <div className="pill-card overflow-hidden">
+            <div className="overflow-x-auto hide-scrollbar">
+                <table className="w-full border-collapse table-fixed">
+                    <thead>
+                        <tr className="bg-sage-bg/30">
+                            <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-16">Day</th>
+                            <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase">Adults</th>
+                            <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase">Kids</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {meals.slice(mealStartDay - 1, mealStartDay + 6).map((day) => {
+                            const dIdx = day.id - 1;
+                            return (
+                                <tr key={day.id} className="hover:bg-sage-bg/10 border-b border-sage-primary/5">
+                                    <td className="px-6 py-4 text-center align-top">
+                                        <span className="text-lg font-light text-sage-dark opacity-40">{day.id}</span>
+                                    </td>
+                                    
+                                    {/* Adult Meals */}
+                                    <td className="px-6 py-4 align-top space-y-4">
+                                        {['Suhoor', 'Iftar'].map((label, sIdx) => (
+                                            <div key={label} className="space-y-1">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-[9px] font-bold text-sage-primary/50 uppercase">{label}</span>
+                                                    <button onClick={() => addMealItem(dIdx, 'adult', sIdx)} className="text-sage-primary text-lg">+</button>
+                                                </div>
+                                                {day.adult[sIdx].map((it, iIdx) => (
+                                                    <div key={iIdx} className="flex items-center gap-2 p-1 bg-white/50 rounded-lg">
+                                                        <input 
+                                                            className="bg-transparent text-sm font-light w-full outline-none"
+                                                            value={it}
+                                                            onChange={(e) => updateMealText(dIdx, 'adult', sIdx, iIdx, e.target.value)}
+                                                        />
+                                                        <button onClick={() => {
+                                                            const n = [...meals];
+                                                            n[dIdx].adult[sIdx].splice(iIdx, 1);
+                                                            setMeals(n);
+                                                        }} className="text-xs text-red-300">×</button>
+                                                    </div>
+                                                ))}
                                             </div>
                                         ))}
-                                    </div>
-                                ))}
-                            </td>
-                        </tr>
-                    );
-                })}
-            </tbody>
-        </table>
-    </div>
-</div>
+                                    </td>
 
+                                    {/* Kids Meals */}
+                                    <td className="px-6 py-4 align-top space-y-4 bg-sage-bg/5">
+                                        {['Breakfast', 'Lunch', 'Dinner'].map((label, sIdx) => (
+                                            <div key={label} className="space-y-1">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-[9px] font-bold text-sage-primary/40 uppercase">{label}</span>
+                                                    <button onClick={() => addMealItem(dIdx, 'kids', sIdx)} className="text-sage-primary text-lg">+</button>
+                                                </div>
+                                                {day.kids[sIdx].map((it, iIdx) => (
+                                                    <div key={iIdx} className="flex items-center gap-2 p-1 bg-white/50 rounded-lg">
+                                                        <input 
+                                                            className="bg-transparent text-xs font-light w-full outline-none"
+                                                            value={it}
+                                                            onChange={(e) => updateMealText(dIdx, 'kids', sIdx, iIdx, e.target.value)}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ))}
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 )}
 {/* MODULE: ACTIVITIES */}
