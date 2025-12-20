@@ -101,7 +101,7 @@
         const App = () => {
             const [activeModule, setActiveModule] = useState(() => localStorage.getItem('r_last_module_v9') || 'today');
             const [ramadanDay, setRamadanDay] = useState(() => parseInt(localStorage.getItem('r_current_day_v9')) || 1);
-            const [mealStartDay, setMealStartDay] = useState(1);
+            const [mealStartDay, setMealStartDay] = useState(() => parseInt(localStorage.getItem('r_meal_start_v9')) || 1);
             const [meals, setMeals] = useState(() => JSON.parse(localStorage.getItem('r_meals_v9')) || generate30Days());
             const [activities, setActivities] = useState(() => JSON.parse(localStorage.getItem('r_act_v9')) || []);
             const [prePlan, setPrePlan] = useState(() => JSON.parse(localStorage.getItem('r_pre_v9')) || INITIAL_PREPLAN);
@@ -121,8 +121,8 @@
     localStorage.setItem('r_shop_v9', shoppingList);
     localStorage.setItem('r_current_day_v9', ramadanDay.toString());
     // Add this line:
-    localStorage.setItem('r_last_module_v9', activeModule); 
-}, [meals, activities, prePlan, notes, shoppingList, ramadanDay, activeModule]);
+    localStorage.setItem('r_meal_start_v9', mealStartDay.toString());
+}, [meals, activities, prePlan, notes, shoppingList, ramadanDay, activeModule, mealStartDay]);
 
             const addMealItem = (dIdx, type, sIdx) => {
                 const n = [...meals];
@@ -301,7 +301,7 @@
             </div>
             {['Suhoor', 'Iftar'].map((label, i) => (
                 <div key={label} className="group">
-                    <p className="text-[9px] font-bold text-sage-primary/40 uppercase mb-2">{label}</p>
+                    <p className="text-[14px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
                     <p className="text-[14px] text-text-main font-light leading-relaxed">
                         {meals[ramadanDay-1].adult[i].filter(x => x).join(' • ') || "—"}
                     </p>
@@ -316,7 +316,7 @@
             </div>
             {['Breakfast', 'Lunch', 'Dinner'].map((label, i) => (
                 <div key={label} className="group">
-                    <p className="text-[9px] font-bold text-sage-primary/40 uppercase mb-2">{label}</p>
+                    <p className="text-[14px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
                     <p className="text-[14px] text-text-main font-light leading-relaxed">
                         {meals[ramadanDay-1].kids[i].filter(x => x).join(' • ') || "—"}
                     </p>
@@ -413,7 +413,7 @@
                                         }}
                                     >
                                         <div className="flex justify-between items-center w-full">
-    <span className="text-[9px] font-bold text-sage-primary/40 uppercase">{label}</span>
+    <span className="text-[9px] font-bold text-sage-primary/50 uppercase">{label}</span>
     <button 
         onClick={(e) => { 
             e.stopPropagation(); 
