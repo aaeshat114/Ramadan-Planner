@@ -3,7 +3,7 @@
   "short_name": "Ramadan",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#E1E7E1",
+  "background_color": "#7C9082",
   "theme_color": "#E1E7E1",
   "orientation": "any",
   "icons": [
