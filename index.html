@@ -297,7 +297,7 @@
         {/* Adults Column */}
         <div className="space-y-6">
             <div className="flex flex-col items-start gap-1">
-                <span className="text-[12px] font-black text-sage-primary/40 uppercase tracking-[0.2em]">Adults</span>
+                <span className="text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">Adults</span>
             </div>
             {['Suhoor', 'Iftar'].map((label, i) => (
                 <div key={label} className="group">
@@ -312,7 +312,7 @@
         {/* Kids Column */}
         <div className="space-y-6">
             <div className="flex flex-col items-start gap-1">
-                <span className="text-[12px] font-black text-sage-primary/40 uppercase tracking-[0.2em]">Kids</span>
+                <span className="text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">Kids</span>
             </div>
             {['Breakfast', 'Lunch', 'Dinner'].map((label, i) => (
                 <div key={label} className="group">
@@ -343,6 +343,7 @@
 {/* MODULE: MEALS */}
 {activeModule === 'meals' && (
     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        {/* Controls & Shopping List Header */}
         <div className="flex flex-col md:flex-row gap-3 items-start">
             <div className="pill-card p-4 flex items-center gap-3 flex-grow">
                 <div className="flex flex-col">
@@ -367,11 +368,11 @@
             </div>
 
             <div className="w-full md:w-80 group">
-                <div className="pill-card p-4 bg-sage-bg/30">
+                <div className="pill-card p-4 bg-sage-bg/30 hover:shadow-md transition-shadow">
                     <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase mb-3 block">Shopping List</span>
                     <textarea 
-                        className="w-full bg-transparent text-sm font-light text-text-main outline-none min-h-[100px] resize-none" 
-                        placeholder="Add items..." 
+                        className="w-full bg-[#f0f3f0] text-sm font-light text-text-main outline-none min-h-[100px] placeholder-[#b5ada8] resize-none" 
+                        placeholder="Add items needed..." 
                         value={shoppingList} 
                         onChange={(e) => setShoppingList(e.target.value)} 
                     />
@@ -379,78 +380,160 @@
             </div>
         </div>
 
-        <div className="pill-card overflow-hidden">
-            <div className="overflow-x-auto hide-scrollbar">
-                <table className="w-full border-collapse table-fixed">
-                    <thead>
-                        <tr className="bg-sage-bg/30">
-                            <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-16">Day</th>
-                            <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase">Adults</th>
-                            <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase">Kids</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {meals.slice(mealStartDay - 1, mealStartDay + 6).map((day) => {
-                            const dIdx = day.id - 1;
-                            return (
-                                <tr key={day.id} className="hover:bg-sage-bg/10 border-b border-sage-primary/5">
-                                    <td className="px-6 py-4 text-center align-top">
-                                        <span className="text-lg font-light text-sage-dark opacity-40">{day.id}</span>
-                                    </td>
-                                    
-                                    {/* Adult Meals */}
-                                    <td className="px-6 py-4 align-top space-y-4">
-                                        {['Suhoor', 'Iftar'].map((label, sIdx) => (
-                                            <div key={label} className="space-y-1">
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-[9px] font-bold text-sage-primary/50 uppercase">{label}</span>
-                                                    <button onClick={() => addMealItem(dIdx, 'adult', sIdx)} className="text-sage-primary text-lg">+</button>
-                                                </div>
-                                                {day.adult[sIdx].map((it, iIdx) => (
-                                                    <div key={iIdx} className="flex items-center gap-2 p-1 bg-sage-primary rounded-lg">
-                                                        <input 
-                                                            className="bg-transparent text-sm font-light w-full outline-none"
-                                                            value={it}
-                                                            onChange={(e) => updateMealText(dIdx, 'adult', sIdx, iIdx, e.target.value)}
-                                                        />
-                                                        <button onClick={() => {
-                                                            const n = [...meals];
-                                                            n[dIdx].adult[sIdx].splice(iIdx, 1);
-                                                            setMeals(n);
-                                                        }} className="text-xs text-red-300">×</button>
-                                                    </div>
-                                                ))}
+        {/* Weekly Grid */}
+<div className="pill-card overflow-hidden">
+    <div className="overflow-x-auto hide-scrollbar">
+        <table className="w-full border-collapse table-fixed">
+            <thead>
+                <tr className="bg-sage-bg/30">
+                    {/* Changed text-left to text-center */}
+                    <th className="px-6 py-4 text-right text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-16">Day</th>
+                    <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">Adults</th>
+                    <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[42%]">Kids</th>
+                </tr>
+            </thead>
+            <tbody className="">
+                {meals.slice(mealStartDay - 1, mealStartDay + 6).map((day) => {
+                    const dIdx = day.id - 1;
+                    return (
+                        <tr key={day.id} className="hover:bg-sage-bg/10 transition-colors">
+                            {/* Changed text-right to text-center and ensured vertical alignment */}
+                            <td className="px-6 py-4 align-top text-center w-16">
+                                <span className="text-lg font-light text-sage-dark opacity-40">{day.id}</span>
+                            </td>
+                            
+                            {/* Adult Section */}
+                            <td className="px-6 py-4 align-top space-y-4">
+                                {['Suhoor', 'Iftar'].map((label, sIdx) => (
+                                    <div 
+                                        key={label} 
+                                        className="space-y-2 min-h-[60px] group"
+                                        onClick={() => {
+                                            if (selectedMeal) {
+                                                handleMealClick(dIdx, 'adult', sIdx, day.adult[sIdx].length);
+                                            }
+                                        }}
+                                    >
+                                        <div className="flex justify-between items-center w-full">
+                                            <span className="text-[9px] font-bold text-sage-primary/50 uppercase">{label}</span>
+                                            <button 
+                                                onClick={(e) => { 
+                                                    e.stopPropagation(); 
+                                                    addMealItem(dIdx, 'adult', sIdx); 
+                                                }} 
+                                                className="text-[#b5ada8]"
+                                            >
+                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        {day.adult[sIdx].map((it, iIdx) => (
+                                            <div 
+                                                key={iIdx} 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleMealClick(dIdx, 'adult', sIdx, iIdx);
+                                                }}
+                                                className={`flex items-center gap-2 p-2 rounded-xl transition-all ${selectedMeal?.dIdx === dIdx && selectedMeal?.type === 'adult' && selectedMeal?.sIdx === sIdx && selectedMeal?.iIdx === iIdx ? 'selected-item' : 'bg-sage-bg/30 hover:bg-sage-bg/60'}`}
+                                            >
+                                                <input 
+                                                    className="bg-transparent text-sm font-light text-text-main outline-none w-full" 
+                                                    value={it} 
+                                                    onChange={(e) => updateMealText(dIdx, 'adult', sIdx, iIdx, e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            setSelectedMeal(null);
+                                                            e.target.blur();
+                                                        }
+                                                    }}
+                                                    placeholder="..."
+                                                />
+                                                <button 
+                                                    onClick={(e) => { 
+                                                        e.stopPropagation(); 
+                                                        const n = [...meals]; 
+                                                        n[dIdx].adult[sIdx].splice(iIdx, 1); 
+                                                        setMeals(n); 
+                                                    }} 
+                                                    className="text-[#b5ada8]"
+                                                >
+                                                    ×
+                                                </button>
                                             </div>
                                         ))}
-                                    </td>
+                                    </div>
+                                ))}
+                            </td>
 
-                                    {/* Kids Meals */}
-                                    <td className="px-6 py-4 align-top space-y-4 bg-sage-bg/5">
-                                        {['Breakfast', 'Lunch', 'Dinner'].map((label, sIdx) => (
-                                            <div key={label} className="space-y-1">
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-[9px] font-bold text-sage-primary/40 uppercase">{label}</span>
-                                                    <button onClick={() => addMealItem(dIdx, 'kids', sIdx)} className="text-sage-primary text-lg">+</button>
-                                                </div>
-                                                {day.kids[sIdx].map((it, iIdx) => (
-                                                    <div key={iIdx} className="flex items-center gap-2 p-1 bg-sage-primary rounded-lg">
-                                                        <input 
-                                                            className="bg-transparent text-xs font-light w-full outline-none"
-                                                            value={it}
-                                                            onChange={(e) => updateMealText(dIdx, 'kids', sIdx, iIdx, e.target.value)}
-                                                        />
-                                                    </div>
-                                                ))}
+                            {/* Kids Section */}
+                            <td className="px-6 py-4 align-top space-y-4 bg-sage-bg/5">
+                                {['Breakfast', 'Lunch', 'Dinner'].map((label, sIdx) => (
+                                    <div 
+                                        key={label} 
+                                        className="space-y-2 min-h-[60px]"
+                                        onClick={() => {
+                                            if (selectedMeal) {
+                                                handleMealClick(dIdx, 'kids', sIdx, day.kids[sIdx].length);
+                                            }
+                                        }}
+                                    >
+                                        <div className="flex justify-between items-center w-full">
+                                            <span className="text-[9px] font-bold text-sage-primary/40 uppercase">{label}</span>
+                                            <button 
+                                                onClick={(e) => { 
+                                                    e.stopPropagation(); 
+                                                    addMealItem(dIdx, 'kids', sIdx); 
+                                                }} 
+                                                className="text-[#b5ada8]"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                        {day.kids[sIdx].map((it, iIdx) => (
+                                            <div 
+                                                key={iIdx} 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleMealClick(dIdx, 'kids', sIdx, iIdx);
+                                                }}
+                                                className={`flex items-center gap-2 p-2 rounded-xl transition-all ${selectedMeal?.dIdx === dIdx && selectedMeal?.type === 'kids' && selectedMeal?.sIdx === sIdx && selectedMeal?.iIdx === iIdx ? 'selected-item' : 'bg-sage-bg/50 hover:bg-[var(--sage-card)]'}`}
+                                            >
+                                                <input 
+                                                    className="bg-transparent text-xs font-light text-text-main outline-none w-full" 
+                                                    value={it} 
+                                                    onChange={(e) => updateMealText(dIdx, 'kids', sIdx, iIdx, e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            setSelectedMeal(null);
+                                                            e.target.blur();
+                                                        }
+                                                    }}
+                                                />
+                                                <button 
+                                                    onClick={(e) => { 
+                                                        e.stopPropagation(); 
+                                                        const n = [...meals]; 
+                                                        n[dIdx].kids[sIdx].splice(iIdx, 1); 
+                                                        setMeals(n); 
+                                                    }} 
+                                                    className="text-[#b5ada8]"
+                                                >
+                                                    ×
+                                                </button>
                                             </div>
                                         ))}
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                                    </div>
+                                ))}
+                            </td>
+                        </tr>
+                    );
+                })}
+            </tbody>
+        </table>
+    </div>
+</div>
+
     </div>
 )}
 {/* MODULE: ACTIVITIES */}
