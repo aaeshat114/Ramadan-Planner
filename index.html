@@ -37,7 +37,7 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
         }
 
-        /* Updated: Removed sticky and fixed positions */
+        
         .nav-blur {
             background: rgba(228, 233, 228, 0.85);
             backdrop-filter: blur(16px);
@@ -80,6 +80,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
+
         const { useState, useEffect } = React;
 
         const generate30Days = () => Array.from({ length: 30 }, (_, i) => ({
@@ -92,29 +93,45 @@
 
 const translations = {
     en: {
-        today: "Today", meals: "Meals", activities: "Activities", preplan: "Preplan", notes: "Notes",
+        ramadan: "Ramadan 1447", today: "Today", meals: "Meals", activities: "Activities", preplan: "Preplan", notes: "Notes",
         adults: "Adults", kids: "Kids", suhoor: "Suhoor", iftar: "Iftar",
         breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner",
-        shopping: "Shopping List", weekStart: "Week Starting", day: "Day",
-        newAct: "New activity name...", addSupply: "Add a supply...",
-        quote: "So eat from the lawful and good things Allah provided for you, and be thankful for Allah’s favor - if it is Him that you worship. (16:114)",
+        shopping: "Shopping List", weekStart: "Week Starting", Day: "Day",
+        day: "day", adults_low: "adults", kids_low: "kids",
+        newAct: "New activity...", addSupply: "Add a supply...",
+        noAct: "No activity scheduled for today", activity: "Activity",
+        details: "Details", assign: "Assign Here", editAct: "Edit Activity",
+        supplies: "Supplies", removeAct: "Remove Activity",
+        confirmRem: "Confirm Removal", keep: "Keep", moveToLib: "Move to Library",
+        task: "Task...", newNote: "new note", title: "Title",
+        beginWrite: "Begin writing", delete: "Delete",
+        quote: "So eat from the lawful and good things Allah provided for you, and be thankful for Allah’s favor - if it is Him that you worship.", 
+        quranRef: "Quran 16:114",
         status: { ready: "Ready", buy: "Buy", find: "Find", prepare: "Prep", print: "Print" }
     },
     cz: {
-        today: "Dnešek", meals: "Jídelníček", activities: "Aktivity", preplan: "Příprava", notes: "Zápisník",
+        ramadan: "Ramadán 1447", today: "Dnes", meals: "Jídelníček", activities: "Aktivity", preplan: "Příprava", notes: "Zápisník",
         adults: "Dospělí", kids: "Děti", suhoor: "Suhúr", iftar: "Iftár",
         breakfast: "Snídaně", lunch: "Oběd", dinner: "Večeře",
-        shopping: "Nákupní seznam", weekStart: "Týden od dne", day: "Den",
+        shopping: "Nákupní seznam", weekStart: "Týden od dne", Day: "Den",
+        day: "den", adults_low: "dospělí", kids_low: "děti",
         newAct: "Název aktivity...", addSupply: "Přidat potřebu...",
-        quote: "Pojídejte ze všeho, co Alláh vám uštědřil jako dovolené a výtečné, a buďte vděční za dobrodiní Alláhovo, jestliže je to vskutku On, jehož uctíváte. (16:114)",
+        noAct: "Na dnešek není naplánována žádná aktivita", activity: "Aktivita",
+        details: "Podrobnosti", assign: "Přiřadit sem", editAct: "Upravit aktivitu",
+        supplies: "Potřeby", removeAct: "Smazat aktivitu",
+        confirmRem: "Potvrdit smazání", keep: "Ponechat", moveToLib: "Uložit do knihovny",
+        task: "Úkol...", newNote: "Nová poznámka", title: "Název",
+        beginWrite: "Začni psát...", delete: "Smazat",
+        quote: "Pojídejte ze všeho, co Alláh vám uštědřil jako dovolené a výtečné, a buďte vděční za dobrodiní Alláhovo, jestliže je to vskutku On, jehož uctíváte.", 
+        quranRef: "Korán 16:114",
         status: { ready: "Hotovo", buy: "Koupit", find: "Najít", prepare: "Připravit", print: "Vytisknout" }
     }
 };
 
         const App = () => {
             const [lang, setLang] = useState(() => localStorage.getItem('r_lang_v9') || 'en');
-            const t = translations[lang];
-            const txt = (en, cz) => (lang === 'en' ? en : cz);
+            const L = translations[lang];
+            
 const STATUS_TYPES = [
     { 
         id: 'ready', 
@@ -233,10 +250,8 @@ localStorage.setItem('r_lang_v9', lang);
     <div className="flex flex-col items-center relative w-full max-w-md">
         {/* Main Title */}
         <span className="text-[20px] font-bold tracking-[0.3em] text-[#7c9082] uppercase">
-            {txt("Ramadan 1447", "Ramadán 1447")}
+            {L.ramadan}
         </span>
-
-        {/* Language Toggle - Positioned to the right */}
         <button 
             onClick={() => setLang(lang === 'en' ? 'cz' : 'en')}
             className="absolute right-0 top-1/2 -translate-y-1/2 text-[10px] font-bold tracking-widest text-sage-primary opacity-60 hover:opacity-100 transition-opacity border border-sage-primary/20 px-2 py-1 rounded-md"
@@ -246,25 +261,19 @@ localStorage.setItem('r_lang_v9', lang);
     </div>
     
     <div className="grid grid-cols-6 gap-4 bg-sage/40 p-1.5 rounded-[24px] border border-sage-primary/10 w-full max-w-md">
-        {[
-            { id: 'today', en: 'Today', cz: 'Dnešek' },
-            { id: 'meals', en: 'Meals', cz: 'Jídelníček' },
-            { id: 'activities', en: 'Activities', cz: 'Aktivity' },
-            { id: 'preplan', en: 'Preplan', cz: 'Příprava' },
-            { id: 'notes', en: 'Notes', cz: 'Zápisník' }
-        ].map((m, idx) => (
-            <button 
-                key={m.id}
-                onClick={() => setActiveModule(m.id)}
-                className={`
-                    px-2 py-2.5 rounded-full text-[10px] font-bold tracking-widest uppercase transition-all
-                    ${activeModule === m.id ? 'bg-[#d1dad2] text-[var(--text-muted)]' : 'text-sage-primary hover:bg-[var(--sage-card)]'}
-                    ${idx < 3 ? 'col-span-2' : 'col-span-3'}
-                `}
-            >
-                {txt(m.en, m.cz)}
-            </button>
-        ))}
+        {['today', 'meals', 'activities', 'preplan', 'notes'].map((m, idx) => (
+    <button 
+        key={m}
+        onClick={() => setActiveModule(m)}
+        className={`
+            px-2 py-2.5 rounded-full text-[10px] font-bold tracking-widest uppercase transition-all
+            ${activeModule === m ? 'bg-[#d1dad2] text-[var(--text-muted)]' : 'text-sage-primary hover:bg-[var(--sage-card)]'}
+            ${idx < 3 ? 'col-span-2' : 'col-span-3'}
+        `}
+    >
+        {L[m]}
+    </button>
+))}
     </div>
 </nav>
 
@@ -278,7 +287,7 @@ localStorage.setItem('r_lang_v9', lang);
         {/* Day Selector Header */}
         <div className="text-center">
             <div className="flex flex-col items-center">
-                <h1 className="text-4xl font-light text-sage-dark opacity-40 tracking-tighter">day {ramadanDay}</h1>
+                <h1 className="text-4xl font-light text-sage-dark opacity-40 tracking-tighter">{L.day} {ramadanDay}</h1>
             </div>
             <div className="px-10">
                 <input 
@@ -298,7 +307,7 @@ localStorage.setItem('r_lang_v9', lang);
             const todayAct = activities.find(a => a.day === ramadanDay);
             if (!todayAct) return (
                 <div className="pill-card p-5 border-dashed border-sage-primary/20 bg-transparent flex items-center justify-center">
-                    <span className="text-sm text-[#b5ada8] font-light italic">No activity scheduled for today</span>
+                    <span className="text-sm text-center text-[#b5ada8] font-light italic">{L.noAct}</span>
                 </div>
             );
 
@@ -352,7 +361,7 @@ localStorage.setItem('r_lang_v9', lang);
 <div className="pill-card p-10">
     <div className="flex items-center gap-4 mb-4">
         <div className="h-[1px] flex-grow bg-sage-primary/10"></div>
-        <span className="text-[14px] font-bold tracking-[0.3em] text-sage-primary uppercase">{txt("Meal plan", "Jídelníček")}</span>
+        <span className="text-[14px] font-bold tracking-[0.3em] text-sage-primary uppercase">{L.meals}</span>
         <div className="h-[1px] flex-grow bg-sage-primary/10"></div>
     </div>
 
@@ -363,9 +372,9 @@ localStorage.setItem('r_lang_v9', lang);
         {/* Adults Column */}
         <div className="space-y-6">
             <div className="flex flex-col items-start gap-1">
-                <span className="text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">{txt("Adults", "Dospělí")}</span>
+                <span className="text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">{L.adults}</span>
             </div>
-            {[txt("Suhoor", "Suhúr"), txt("Iftar", "Iftár")].map((label, i) => (
+            {[L.suhoor, L.iftar].map((label, i) => (
                 <div key={label} className="group">
                     <p className="text-[14px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
                     <p className="text-[14px] text-text-main font-light leading-relaxed">
@@ -378,9 +387,9 @@ localStorage.setItem('r_lang_v9', lang);
         {/* Kids Column */}
         <div className="space-y-6">
             <div className="flex flex-col items-start gap-1">
-                <span className="text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">{txt("Kids", "Děti")}</span>
+                <span className="text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">{L.kids}</span>
             </div>
-            {[txt("Breakfast", "Snídaně"), txt("Lunch", "Oběd"), txt("Dinner", "Večeře")].map((label, i) => (
+            {[L.breakfast, L.lunch, L.dinner].map((label, i) => (
                 <div key={label} className="group">
                     <p className="text-[14px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
                     <p className="text-[14px] text-text-main font-light leading-relaxed">
@@ -413,9 +422,9 @@ localStorage.setItem('r_lang_v9', lang);
         <div className="flex flex-col md:flex-row gap-3 items-start">
             <div className="pill-card p-4 flex items-center gap-3 flex-grow">
                 <div className="flex flex-col">
-                    <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase">{txt("Week Starting", "Týden od dne")}</span>
+                    <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase">{L.weekStart}</span>
                     <div className="flex items-center gap-2">
-                        <span className="text-sm font-light text-text-muted">{txt("Day", "Den")}</span>
+                        <span className="text-sm font-light text-text-muted">{L.Day}</span>
                         <input 
                             type="text" 
                             inputMode="numeric" 
@@ -428,20 +437,17 @@ localStorage.setItem('r_lang_v9', lang);
                 </div>
                 <div className="h-10 w-[1px] bg-sage-primary/10"></div>
                 <p className="text-xs text-text-muted text-justify leading-relaxed max-w-[200px] font-light italic">
-                   {txt(
-"So eat from the lawful and good things Allah provided for you, and be thankful for Allah’s favor - if it is Him that you worship.",
-"Pojídejte ze všeho, co Alláh vám uštědřil jako dovolené a výtečné, a buďte vděční za dobrodiní Alláhovo, jestliže je to vskutku On, jehož uctíváte."
-)}
-<span className="block text-right">{txt("Quran 16:114","Korán 16:114")}</span>
+                   {L.quote}
+<span className="block text-right">{L.quranRef}</span>
                 </p>                
             </div>
 
             <div className="w-full md:w-80 group">
                 <div className="pill-card p-4 bg-sage-bg/30 hover:shadow-md transition-shadow">
-                    <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase mb-3 block">{txt("Shopping List", "Nákupní seznam")}</span>
+                    <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase mb-3 block">{L.shopping}</span>
                     <textarea 
                         className="w-full bg-[#f0f3f0] text-sm font-light text-text-main outline-none min-h-[100px] placeholder-[#b5ada8] resize-none" 
-                        placeholder={txt("Add items needed...", "Přidej položky...")} 
+                        placeholder={L.addshop} 
                         value={shoppingList} 
                         onChange={(e) => setShoppingList(e.target.value)} 
                     />
@@ -455,9 +461,9 @@ localStorage.setItem('r_lang_v9', lang);
         <table className="w-full border-collapse table-fixed">
             <thead>
                 <tr className="bg-sage-bg/30">
-                    <th className="px-6 py-4 text-right text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-16">{txt("Day", "Den")}</th>
-                    <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">{txt("Adults", "Dospělí")}</th>
-                    <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[42%]">{txt("Kids", "Děti")}</th>
+                    <th className="px-6 py-6 text-right text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-16">{L.Day}</th>
+                    <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">{L.adults}</th>
+                    <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[42%]">{L.kids}</th>
                 </tr>
             </thead>
             <tbody className="">
@@ -471,7 +477,7 @@ localStorage.setItem('r_lang_v9', lang);
                             
                             {/* Adult Section */}
                             <td className="px-6 py-4 align-top space-y-4">
-                                {[txt("Suhoor", "Suhúr"), txt("Iftar", "Iftár")].map((label, sIdx) => (
+                                {[L.suhoor, L.iftar].map((label, sIdx) => (
                                     <div 
                                         key={label} 
                                         className="space-y-2 min-h-[60px] group"
@@ -534,7 +540,7 @@ localStorage.setItem('r_lang_v9', lang);
 
                             {/* Kids Section */}
                             <td className="px-6 py-4 align-top space-y-4 bg-sage-bg/5">
-                                {[txt("Breakfast", "Snídaně"), txt("Lunch", "Oběd"), txt("Dinner", "Večeře")].map((label, sIdx) => (
+                                {[L.breakfast, L.lunch, L.dinner].map((label, sIdx) => (
                                     <div 
                                         key={label} 
                                         className="space-y-2 min-h-[60px]"
@@ -613,7 +619,7 @@ localStorage.setItem('r_lang_v9', lang);
                 <div className="relative group">
                     <input 
                         type="text"
-                        placeholder="New activity name..."
+                        placeholder={L.newAct}
                         value={newActivityName}
                         onChange={(e) => setNewActivityName(e.target.value)}
                         onKeyDown={(e) => {
@@ -657,7 +663,7 @@ localStorage.setItem('r_lang_v9', lang);
                         onClick={(e) => { e.stopPropagation(); setEditingActivity(act); }} 
                         className={`text-[10px] font-bold uppercase tracking-tighter ${isSelected ? 'text-white/80' : 'text-sage-primary/60 hover:text-sage-primary'}`}
                     >
-                        Details
+                        {L.details}
                     </button>
                 </div>
             </div>
@@ -711,7 +717,7 @@ localStorage.setItem('r_lang_v9', lang);
                             ) : (
                                 isBeingTargeted && (
                                     <div className="flex-grow flex items-center justify-center animate-pulse">
-                                        <span className="text-[9px] font-bold text-[#7c9082] uppercase tracking-widest">Assign Here</span>
+                                        <span className="text-[9px] font-bold text-[#7c9082] uppercase tracking-widest">{L.assign}</span>
                                     </div>
                                 )
                             )}
@@ -738,7 +744,7 @@ localStorage.setItem('r_lang_v9', lang);
                     <input 
                         className={`text-lg flex-grow bg-transparent outline-none font-light transition-all placeholder-[#b5ada8] ${item.completed ? 'text-[#b5ada8] line-through decoration-[#b5ada8]' : 'text-sage-dark'}`}
                         value={item.task} 
-                        placeholder="Task..."
+                        placeholder={L.task}
                         onChange={(e) => {const n=[...prePlan]; n[idx].task=e.target.value; setPrePlan(n);}} 
                     />
                 </div>
@@ -757,7 +763,7 @@ localStorage.setItem('r_lang_v9', lang);
                 onClick={()=>setNotes([...notes,{id:Date.now(),title:"",content:"",assignedDay:""}])} 
                 className="px-6 py-2 bg-sage-primary text-white/70 text-[11px] font-bold tracking-widest bg-[#7c9082] uppercase rounded-full hover:scale-105 transition-transform"
             >
-                + new note
+                + {L.newNote}
             </button>
         </div>
 
@@ -769,10 +775,10 @@ localStorage.setItem('r_lang_v9', lang);
         className="font-medium text-sage-dark text-lg bg-transparent outline-none placeholder-[#b5ada8] w-full" 
         value={n.title} 
         onChange={(e)=>{const x=[...notes];x[i].title=e.target.value;setNotes(x);}} 
-        placeholder="Title" 
+        placeholder={L.title} 
     />
     <div className="flex flex-col items-end">
-        <span className="text-[8px] font-bold text-text-muted uppercase text-center w-full tracking-tighter">Day</span>
+        <span className="text-[8px] font-bold text-text-muted uppercase text-center w-full tracking-tighter">{L.Day}</span>
         <input 
             type="text" 
             inputMode="numeric" 
@@ -786,14 +792,14 @@ localStorage.setItem('r_lang_v9', lang);
     className="text-sm font-light text-text-muted bg-transparent outline-none min-h-[120px] resize-none leading-relaxed placeholder-[#b5ada8]" 
     value={n.content} 
     onChange={(e)=>{const x=[...notes];x[i].content=e.target.value;setNotes(x);}} 
-    placeholder="Begin writing" 
+    placeholder={L.beginWrite} 
 />
 
                     <button 
                         onClick={()=>setNotes(notes.filter(x=>x.id!==n.id))} 
-                        className="opacity-0 group-hover:opacity-100 text-[10px] font-bold text-[#b5ada8] uppercase tracking-widest transition-opacity text-right"
+                        className=" group-hover:opacity-100 text-[10px] font-bold text-[#b5ada8] uppercase tracking-widest transition-opacity text-right"
                     >
-                        Delete
+                        {L.delete}
                     </button>
                 </div>
             ))}
@@ -810,21 +816,21 @@ localStorage.setItem('r_lang_v9', lang);
                                 <button onClick={() => setEditingActivity(null)} className="absolute top-8 right-8 text-sage-primary hover:text-sage-dark text-xl">✕</button>
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-[10px] font-bold text-sage-primary uppercase tracking-widest opacity-60">Edit Activity</span>
+                                        <span className="text-[10px] font-bold text-sage-primary uppercase tracking-widest opacity-60">{L.editAct}</span>
                                         {editingActivity.day && (
-                                            <button onClick={() => {setActivities(activities.map(a => a.id === editingActivity.id ? { ...a, day: null } : a)); setEditingActivity(null);}} className="text-[9px] font-bold bg-sage-bg px-3 py-1.5 rounded-full text-sage-primary uppercase tracking-widest hover:bg-sage-primary hover:text-[var(--text-muted)] transition-all shadow-sm">⟲ Move to Library</button>
+                                            <button onClick={() => {setActivities(activities.map(a => a.id === editingActivity.id ? { ...a, day: null } : a)); setEditingActivity(null);}} className="text-[9px] font-bold bg-sage-bg px-3 py-1.5 rounded-full text-sage-primary uppercase tracking-widest hover:bg-sage-primary hover:text-[var(--text-muted)] transition-all shadow-sm">{L.moveToLib}</button>
                                         )}
                                     </div>
                                     <input className="text-3xl font-light text-sage-dark bg-transparent outline-none w-full border-b border-sage-primary/10 pb-2" value={editingActivity.name} onChange={(e) => {const v = e.target.value; setActivities(activities.map(a => a.id === editingActivity.id ? { ...a, name: v } : a)); setEditingActivity({ ...editingActivity, name: v });}} />
                                 </div>
                                 <div className="space-y-6">
                                     <div className="space-y-4">
-    <span className="text-[11px] font-bold text-sage-dark tracking-widest uppercase">Supplies Checklist</span>
+    <span className="text-[11px] font-bold text-sage-dark tracking-widest uppercase">{L.supplies}</span>
     <div className="flex gap-2">
         <input 
     id="new-supply-input"
     type="text" 
-    placeholder="Add a supply..."
+    placeholder={L.addSupply}
     style={{ backgroundColor: '#f0f3f0' }} // Forces the exact color
     className="flex-grow border border-[#b5ada8] rounded-xl py-3 px-4 text-sm text-sage-dark placeholder-[#b5ada8] outline-none focus: transition-all"
     onKeyDown={(e) => {
@@ -858,7 +864,7 @@ localStorage.setItem('r_lang_v9', lang);
             onClick={() => setIsDeleting(true)} 
             className="w-full text-sage-primary/60 text-[10px] font-bold uppercase py-4 border border-sage-primary/10 rounded-full hover:bg-sage-bg/50 transition-all"
         >
-            Remove Activity
+            {L.removeAct}
         </button>
     ) : (
         <div className="flex gap-3 animate-in fade-in duration-300">
@@ -870,13 +876,13 @@ localStorage.setItem('r_lang_v9', lang);
                 }} 
                 className="flex-grow bg-[#4a5750] text-[#e1e7e1] text-[10px] font-bold uppercase py-4 rounded-full shadow-sm hover:opacity-90 transition-opacity"
             >
-                Confirm Removal
+                {L.confirmRem}
             </button>
             <button 
                 onClick={() => setIsDeleting(false)} 
                 className="px-8 bg-transparent text-[#b5ada8] text-[10px] font-bold uppercase py-4 rounded-full border border-[#b5ada8]/20 hover:bg-sage-card/20 transition-all"
             >
-                Keep
+                {L.keep}
             </button>
         </div>
     )}    
