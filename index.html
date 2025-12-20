@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#E1E7E1">
     <title>Ramadan</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -209,70 +207,66 @@
                         
                                           {/* MODULE: TODAY */}
 {activeModule === 'today' && (
-    <div className="max-w-2xl mx-auto space-y-4 animate-in fade-in duration-700">
+    <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-700">
         {/* Day Selector Header */}
-        <div className="text-center space-y-0">
-            <div className="flex flex-col items-center">
-                <h1 className="text-3xl font-light text-sage-dark opacity-40 tracking-tighter">day {ramadanDay}</h1>
+        <div className="text-center py-4">
+            <div className="flex flex-col items-center mb-2">
+                <h1 className="text-5xl font-light text-sage-dark opacity-60 tracking-tighter">day {ramadanDay}</h1>
             </div>
-            <div className="px-10">
+            <div className="px-6 max-w-md mx-auto">
                 <input 
                     type="range" 
                     min="1" 
                     max="30" 
                     value={ramadanDay} 
                     onChange={(e) => setRamadanDay(parseInt(e.target.value))} 
-                    className="w-full" 
+                    className="w-full h-2 cursor-pointer" 
                 />
             </div>
         </div>
         
-                                                               
-{/* Activity Spotlight */}
+        {/* Activity Spotlight */}
         {(() => {
             const todayAct = activities.find(a => a.day === ramadanDay);
             if (!todayAct) return (
-                <div className="pill-card p-5 border-dashed border-sage-primary/20 bg-transparent flex items-center justify-center">
-                    <span className="text-[#b5ada8] font-light italic">No activity scheduled for today</span>
+                <div className="pill-card p-8 border-dashed border-sage-primary/30 bg-sage-card/30 flex flex-col items-center justify-center gap-2">
+                    <span className="text-2xl opacity-20">☪</span>
+                    <span className="text-sage-primary font-light italic">No activity scheduled for today</span>
                 </div>
             );
 
             const isAllReady = todayAct.supplies?.length > 0 && todayAct.supplies.every(s => s.status === 'ready');
 
             return (
-                <div className={`pill-card p-5 transition-all duration-500 ${
-                    isAllReady ? 'bg-[#7c9082]' : 'bg-[var(--sage-card)] shadow-sm'
+                <div className={`pill-card p-6 transition-all duration-500 shadow-sm ${
+                    isAllReady ? 'bg-gradient-to-br from-[#7c9082] to-[#6a7d70] text-white' : 'bg-white'
                 }`}>
                     <div className="flex justify-between items-start mb-4">
-                        <span className={`text-[10px] font-bold uppercase tracking-widest opacity-60 ${
-                            isAllReady ? 'text-[var(--sage-bg)]' : 'text-sage-primary'
-                        }`}>Activity</span>
-                        <div className="flex gap-2">
+                        <span className={`text-[11px] font-bold uppercase tracking-[0.2em] opacity-70 ${
+                            isAllReady ? 'text-white' : 'text-sage-primary'
+                        }`}>Today's Activity</span>
+                        <div className="flex gap-2 bg-black/5 p-1.5 rounded-full">
                             {getActIcons(todayAct)}
                         </div>
                     </div>
                     
-                    <h2 className={`text-1xl font-medium tracking-tight mb-2 transition-colors ${
-                        isAllReady ? 'text-[var(--sage-bg)]' : 'text-sage-dark'
+                    <h2 className={`text-2xl font-semibold tracking-tight mb-4 ${
+                        isAllReady ? 'text-white' : 'text-sage-dark'
                     }`}>
                         {todayAct.name}
                     </h2>
 
                     <div className="flex flex-wrap gap-2">
                         {todayAct.supplies.map((s, i) => {
-                            // Find the specific color for this supply's status
                             const statusInfo = STATUS_TYPES.find(st => st.id === s.status) || STATUS_TYPES[1];
-                            const statusColor = statusInfo.color;
-
                             return (
                                 <span 
                                     key={i} 
-                                    className={`px-3 py-1 rounded-full text-[10px] border transition-all duration-300 ${
+                                    className={`px-4 py-1.5 rounded-full text-xs font-medium border transition-all ${
                                         isAllReady
-                                        ? 'border-white/20 bg-sage-card/10 text-[var(--sage-bg)]' 
-                                        : 'bg-sage-bg/30'
+                                        ? 'border-white/20 bg-white/10 text-white' 
+                                        : 'bg-sage-bg/20 border-sage-primary/10 text-sage-dark'
                                     }`}
-                                    style={!isAllReady ? { borderColor: `${statusColor}44`, color: statusColor } : {}}
                                 >
                                     {s.itemName}
                                 </span>
@@ -284,63 +278,64 @@
         })()}
 
         {/* Meal Layout */}
-<div className="pill-card p-5">
-    <div className="flex items-center gap-4 mb-4">
-        <div className="h-[1px] flex-grow bg-sage-primary/10"></div>
-        <span className="text-[10px] font-bold tracking-[0.3em] text-sage-primary uppercase">Meal plan</span>
-        <div className="h-[1px] flex-grow bg-sage-primary/10"></div>
-    </div>
-
-    <div className="grid grid-cols-2 gap-3 relative">
-        {/* Vertical Divider Line */}
-        <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-sage-primary/5 -translate-x-1/2 hidden md:block"></div>
-
-        {/* Adults Column */}
-        <div className="space-y-4">
-            <div className="flex flex-col items-start gap-1">
-                <span className="text-[10px] font-black text-sage-primary/40 uppercase tracking-[0.2em]">Adults</span>
+        <div className="pill-card p-6 bg-white shadow-sm">
+            <div className="flex items-center gap-4 mb-8">
+                <div className="h-[1px] flex-grow bg-sage-primary/10"></div>
+                <span className="text-[11px] font-bold tracking-[0.4em] text-sage-primary/60 uppercase">Menu</span>
+                <div className="h-[1px] flex-grow bg-sage-primary/10"></div>
             </div>
-            {['Suhoor', 'Iftar'].map((label, i) => (
-                <div key={label} className="group">
-                    <p className="text-[9px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
-                    <p className="text-sm text-text-main font-light leading-relaxed">
-                        {meals[ramadanDay-1].adult[i].filter(x => x).join(' • ') || "—"}
-                    </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                {/* Adults Column */}
+                <div className="space-y-6">
+                    <div className="inline-block px-3 py-1 rounded-lg bg-sage-bg/40">
+                        <span className="text-[11px] font-black text-sage-primary uppercase tracking-[0.2em]">Adults</span>
+                    </div>
+                    {['Suhoor', 'Iftar'].map((label, i) => (
+                        <div key={label} className="pl-1 border-l-2 border-sage-primary/10">
+                            <p className="text-[10px] font-bold text-sage-primary/60 uppercase mb-2">{label}</p>
+                            <p className="text-lg text-text-main font-light leading-snug">
+                                {meals[ramadanDay-1].adult[i].filter(x => x).join(' • ') || <span className="opacity-20">—</span>}
+                            </p>
+                        </div>
+                    ))}
                 </div>
-            ))}
+
+                {/* Kids Column */}
+                <div className="space-y-6">
+                    <div className="inline-block px-3 py-1 rounded-lg bg-sage-bg/40">
+                        <span className="text-[11px] font-black text-sage-primary uppercase tracking-[0.2em]">Kids</span>
+                    </div>
+                    {['Breakfast', 'Lunch', 'Dinner'].map((label, i) => (
+                        <div key={label} className="pl-1 border-l-2 border-sage-primary/10">
+                            <p className="text-[10px] font-bold text-sage-primary/60 uppercase mb-2">{label}</p>
+                            <p className="text-lg text-text-main font-light leading-snug">
+                                {meals[ramadanDay-1].kids[i].filter(x => x).join(' • ') || <span className="opacity-20">—</span>}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
 
-        {/* Kids Column */}
-        <div className="space-y-4">
-            <div className="flex flex-col items-start gap-1">
-                <span className="text-[10px] font-black text-sage-primary/40 uppercase tracking-[0.2em]">Kids</span>
-            </div>
-            {['Breakfast', 'Lunch', 'Dinner'].map((label, i) => (
-                <div key={label} className="group">
-                    <p className="text-[9px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
-                    <p className="text-sm text-text-main font-light leading-relaxed">
-                        {meals[ramadanDay-1].kids[i].filter(x => x).join(' • ') || "—"}
-                    </p>
-                </div>
-            ))}
-        </div>
-    </div>
-</div>
-
-        {/* Muted Notes Reflection */}
+        {/* Reflection Note */}
         {notes.filter(n => parseInt(n.assignedDay) === ramadanDay).map(n => (
-            <div key={n.id} className="pill-card p-4 bg-sage-bg/40 border-none">
-                <div className="flex items-center gap-2 mb-2 opacity-50">
-                    <span className="text-[18px]">✧</span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest">{n.title || "Reflection"}</span>
+            <div key={n.id} className="pill-card p-6 bg-sage-primary/5 border-none">
+                <div className="flex items-center gap-3 mb-3">
+                    <span className="text-sage-primary text-xl">✧</span>
+                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-sage-primary">{n.title || "Daily Reflection"}</span>
                 </div>
-                <p className="text-sm text-sage-dark font-light italic leading-relaxed whitespace-pre-wrap">
+                <p className="text-base text-sage-dark font-light italic leading-relaxed whitespace-pre-wrap">
                     "{n.content}"
                 </p>
             </div>
         ))}
+        
+        {/* Bottom padding for mobile reachability */}
+        <div className="h-12"></div>
     </div>
 )}
+
 {/* MODULE: MEALS */}
 {activeModule === 'meals' && (
     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -827,14 +822,5 @@
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>    
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('Service Worker registered!'))
-        .catch(err => console.log('Service Worker failed:', err));
-    });
-  }
-</script>
 </body>
 </html>
