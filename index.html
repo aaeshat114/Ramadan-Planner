@@ -415,20 +415,19 @@
                                         }}
                                     >
                                         <div className="flex justify-between items-center w-full">
-                                            <span className="text-[9px] font-bold text-sage-primary/50 uppercase">{label}</span>
-                                            <button 
-                                                onClick={(e) => { 
-                                                    e.stopPropagation(); 
-                                                    addMealItem(dIdx, 'adult', sIdx); 
-                                                }} 
-                                                className="text-[#b5ada8]"
-                                            >
-                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        {day.adult[sIdx].map((it, iIdx) => (
+    <span className="text-[9px] font-bold text-sage-primary/50 uppercase">{label}</span>
+    <button 
+        onClick={(e) => { 
+            e.stopPropagation(); 
+            addMealItem(dIdx, 'adult', sIdx); 
+        }} 
+        className="text-[#b5ada8] text-[11px] font-bold"
+    >
+        +
+    </button>
+</div>
+
+                                       {day.adult[sIdx].map((it, iIdx) => (
                                             <div 
                                                 key={iIdx} 
                                                 onClick={(e) => {
