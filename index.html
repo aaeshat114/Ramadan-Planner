@@ -119,7 +119,7 @@ const translations = {
         noAct: "Na dnešek není naplánována žádná aktivita", activity: "Aktivita",
         details: "Podrobnosti", assign: "Přiřadit sem", editAct: "Upravit aktivitu",
         supplies: "Potřeby", removeAct: "Smazat aktivitu",
-        confirmRem: "Potvrdit smazání", keep: "Ponechat", moveToLib: "Uložit do knihovny",
+        confirmRem: "Potvrdit smazání", keep: "Ponechat", moveToLib: "Vrátit do knihovny",
         task: "Úkol...", newNote: "Nová poznámka", title: "Název",
         beginWrite: "Začni psát...", delete: "Smazat",
         quote: "Pojídejte ze všeho, co Alláh vám uštědřil jako dovolené a výtečné, a buďte vděční za dobrodiní Alláhovo, jestliže je to vskutku On, jehož uctíváte.", 
@@ -372,11 +372,11 @@ const STATUS_TYPES = [
         {/* Adults Column */}
         <div className="space-y-6">
             <div className="flex flex-col items-start gap-1">
-                <span className="text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">{L.adults}</span>
+                <span className="text-[10px] fold-bold text-sage-primary tracking [0.2em] uppercase">{L.adults}</span>
             </div>
             {[L.suhoor, L.iftar].map((label, i) => (
                 <div key={label} className="group">
-                    <p className="text-[14px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
+                    <p className="text-[9px] font-bold text-sage-primary/40">{label}</p>
                     <p className="text-[14px] text-text-main font-light leading-relaxed">
                         {meals[ramadanDay-1].adult[i].filter(x => x).join(' • ') || "—"}
                     </p>
@@ -387,11 +387,11 @@ const STATUS_TYPES = [
         {/* Kids Column */}
         <div className="space-y-6">
             <div className="flex flex-col items-start gap-1">
-                <span className="text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">{L.kids}</span>
+                <span className="text-[10px] fold-bold text-sage-primary tracking [0.2em] uppercase">{L.kids}</span>
             </div>
             {[L.breakfast, L.lunch, L.dinner].map((label, i) => (
                 <div key={label} className="group">
-                    <p className="text-[14px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
+                    <p className="text-[9px] font-bold text-sage-primary/40">{label}</p>
                     <p className="text-[14px] text-text-main font-light leading-relaxed">
                         {meals[ramadanDay-1].kids[i].filter(x => x).join(' • ') || "—"}
                     </p>
@@ -424,15 +424,19 @@ const STATUS_TYPES = [
                 <div className="flex flex-col">
                     <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase">{L.weekStart}</span>
                     <div className="flex items-center gap-2">
-                        <span className="text-sm font-light text-text-muted">{L.Day}</span>
+                        <span className="text-lg font-light text-dark-sage opacity-40">{L.Day}</span>
                         <input 
-                            type="text" 
-                            inputMode="numeric" 
-                            value={mealStartDay === 0 ? "" : mealStartDay} 
-                            onChange={(e) => { const v = e.target.value; setMealStartDay(v === "" ? 0 : Math.min(24, parseInt(v) || 0)); }}
-                            onBlur={() => setMealStartDay(Math.max(1, mealStartDay || 1))}
-                            className="w-10 text-lg font-medium text-sage-dark bg-transparent border-b border-sage-primary/20 focus:outline-none" 
-                        />
+    type="text" 
+    inputMode="numeric" 
+    value={mealStartDay === 0 ? "" : mealStartDay} 
+    onChange={(e) => { const v = e.target.value; setMealStartDay(v === "" ? 0 : Math.min(24, parseInt(v) || 0)); }}
+    onBlur={() => setMealStartDay(Math.max(1, mealStartDay || 1))}
+    className="w-7 text-lg font-light text-dark-sage opacity-40 bg-transparent border-b-2 border-[#7c9082] focus:border-[#7c9082] focus:outline-none pb-0 transition-all" 
+/>
+
+
+
+
                     </div>
                 </div>
                 <div className="h-10 w-[1px] bg-sage-primary/10"></div>
@@ -488,7 +492,7 @@ const STATUS_TYPES = [
                                         }}
                                     >
                                         <div className="flex justify-between items-center w-full">
-    <span className="text-[9px] font-bold text-sage-primary/50 uppercase">{label}</span>
+    <span className="text-[9px] font-bold text-sage-primary/40 uppercase">{label}</span>
     <button 
         onClick={(e) => { 
             e.stopPropagation(); 
@@ -817,11 +821,8 @@ const STATUS_TYPES = [
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center">
                                         <span className="text-[10px] font-bold text-sage-primary uppercase tracking-widest opacity-60">{L.editAct}</span>
-                                        {editingActivity.day && (
-                                            <button onClick={() => {setActivities(activities.map(a => a.id === editingActivity.id ? { ...a, day: null } : a)); setEditingActivity(null);}} className="text-[9px] font-bold bg-sage-bg px-3 py-1.5 rounded-full text-sage-primary uppercase tracking-widest hover:bg-sage-primary hover:text-[var(--text-muted)] transition-all shadow-sm">{L.moveToLib}</button>
-                                        )}
                                     </div>
-                                    <input className="text-3xl font-light text-sage-dark bg-transparent outline-none w-full border-b border-sage-primary/10 pb-2" value={editingActivity.name} onChange={(e) => {const v = e.target.value; setActivities(activities.map(a => a.id === editingActivity.id ? { ...a, name: v } : a)); setEditingActivity({ ...editingActivity, name: v });}} />
+                                    <input className="text-3xl font-light text-sage-dark bg-transparent outline-none w-full border-b border-[#b5ada8]/30 pb-2" value={editingActivity.name} onChange={(e) => {const v = e.target.value; setActivities(activities.map(a => a.id === editingActivity.id ? { ...a, name: v } : a)); setEditingActivity({ ...editingActivity, name: v });}} />
                                 </div>
                                 <div className="space-y-6">
                                     <div className="space-y-4">
@@ -858,11 +859,23 @@ const STATUS_TYPES = [
                                         })}
                                     </div>
                                 </div>
-                                <div className="pt-4">
+                                <div className="pt-4 space-y-3">
+    {editingActivity.day && (
+        <button 
+            onClick={() => {
+                setActivities(activities.map(a => a.id === editingActivity.id ? { ...a, day: null } : a)); 
+                setEditingActivity(null);
+            }} 
+            className="w-full text-sage-primary/60 text-[10px] font-bold uppercase py-4 border border-[#b5ada8]/20 rounded-full hover:bg-sage-bg/50 transition-all"
+        >
+            {L.moveToLib}
+        </button>
+    )}
+
     {!isDeleting ? (
         <button 
             onClick={() => setIsDeleting(true)} 
-            className="w-full text-sage-primary/60 text-[10px] font-bold uppercase py-4 border border-sage-primary/10 rounded-full hover:bg-sage-bg/50 transition-all"
+            className="w-full bg-transparent text-[#b5ada8] text-[10px] font-bold uppercase py-4 rounded-full border border-[#b5ada8]/20 hover:bg-sage-card/20 transition-all"
         >
             {L.removeAct}
         </button>
@@ -886,6 +899,7 @@ const STATUS_TYPES = [
             </button>
         </div>
     )}    
+            
 </div>
                             </div>
                         </div>
