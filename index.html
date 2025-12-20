@@ -361,9 +361,9 @@
                 </div>
                 <div className="h-10 w-[1px] bg-sage-primary/10"></div>
                 <p className="text-xs text-text-muted text-justify leading-relaxed max-w-[200px] font-light italic">
-    "So eat from the lawful and good things Allah provided for you, and be thankful for Allah’s favor..."
-    <span className="block text-right mt-1 font-medium">— Quran 16:114</span>
-</p>                
+                    So eat from the lawful and good things Allah provided for you, and be thankful for Allah’s favor - if it is Him that you worship.
+<span className="block text-right">Quran 16:114</span>
+                </p>                
             </div>
 
             <div className="w-full md:w-80 group">
@@ -407,7 +407,7 @@
                                                     <button onClick={() => addMealItem(dIdx, 'adult', sIdx)} className="text-sage-primary text-lg">+</button>
                                                 </div>
                                                 {day.adult[sIdx].map((it, iIdx) => (
-                                                    <div key={iIdx} className="flex items-center gap-2 p-1 bg-white/50 rounded-lg">
+                                                    <div key={iIdx} className="flex items-center gap-2 p-1 bg-sage-primary rounded-lg">
                                                         <input 
                                                             className="bg-transparent text-sm font-light w-full outline-none"
                                                             value={it}
@@ -433,7 +433,7 @@
                                                     <button onClick={() => addMealItem(dIdx, 'kids', sIdx)} className="text-sage-primary text-lg">+</button>
                                                 </div>
                                                 {day.kids[sIdx].map((it, iIdx) => (
-                                                    <div key={iIdx} className="flex items-center gap-2 p-1 bg-white/50 rounded-lg">
+                                                    <div key={iIdx} className="flex items-center gap-2 p-1 bg-sage-primary rounded-lg">
                                                         <input 
                                                             className="bg-transparent text-xs font-light w-full outline-none"
                                                             value={it}
