@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramadan</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sage-bg: #e1e7e1;
+            --sage-card: #f0f3f0;
+            --sage-primary: #7c9082;
+            --sage-dark: #4a5750;
+            --text-main: #706863;
+            --text-highlight: #5c524d;
+            --text-muted: #433B38;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--sage-bg); 
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+            /* Allow the whole body to scroll naturally */
+            overflow-y: auto;
+        }
+
+        .pill-card {
+            background: var(--sage-card);
+            border-radius: 32px;
+            border: 1px solid rgba(124, 144, 130, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Updated: Removed sticky and fixed positions */
+        .nav-blur {
+            background: rgba(228, 233, 228, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+            height: 40px;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(124, 144, 130, 0.15);
+            border-radius: 2px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: var(--sage-primary);
+            margin-top: -8px;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .selected-item { 
+            border: 2px solid var(--sage-primary) !important; 
+            background-color: var(--sage-bg) !important; 
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const STATUS_TYPES = [
+            { id: 'ready', label: 'Ready', color: '#638545', icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 13l4 4L19 7" /></svg>) },
+            { id: 'buy', label: 'Buy', color: '#bc7e7e', icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>) },
+            { id: 'find', label: 'Find', color: '#768eb2', icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>) },
+            { id: 'prepare', label: 'Prep', color: '#867699', icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>) },
+            { id: 'print', label: 'Print', color: '#b29369', icon: (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>) }
+        ];
+
+        const generate30Days = () => Array.from({ length: 30 }, (_, i) => ({
+            id: i + 1, adult: [[], []], kids: [[], [], []]
+        }));
+
+        const INITIAL_PREPLAN = Array.from({ length: 60 }, (_, i) => ({
+            day: 60 - i, task: "", completed: false
+        }));
+
+        const App = () => {
+            const [activeModule, setActiveModule] = useState(() => localStorage.getItem('r_last_module_v9') || 'today');
+            const [ramadanDay, setRamadanDay] = useState(() => parseInt(localStorage.getItem('r_current_day_v9')) || 1);
+            const [mealStartDay, setMealStartDay] = useState(1);
+            const [meals, setMeals] = useState(() => JSON.parse(localStorage.getItem('r_meals_v9')) || generate30Days());
+            const [activities, setActivities] = useState(() => JSON.parse(localStorage.getItem('r_act_v9')) || []);
+            const [prePlan, setPrePlan] = useState(() => JSON.parse(localStorage.getItem('r_pre_v9')) || INITIAL_PREPLAN);
+            const [notes, setNotes] = useState(() => JSON.parse(localStorage.getItem('r_notes_v9')) || []);
+            const [shoppingList, setShoppingList] = useState(() => localStorage.getItem('r_shop_v9') || "");
+            const [selectedMeal, setSelectedMeal] = useState(null);
+            const [selectedActivity, setSelectedActivity] = useState(null);
+            const [editingActivity, setEditingActivity] = useState(null);
+            const [newActivityName, setNewActivityName] = useState("");
+            const [isDeleting, setIsDeleting] = useState(false);
+
+            useEffect(() => {
+    localStorage.setItem('r_meals_v9', JSON.stringify(meals));
+    localStorage.setItem('r_act_v9', JSON.stringify(activities));
+    localStorage.setItem('r_pre_v9', JSON.stringify(prePlan));
+    localStorage.setItem('r_notes_v9', JSON.stringify(notes));
+    localStorage.setItem('r_shop_v9', shoppingList);
+    localStorage.setItem('r_current_day_v9', ramadanDay.toString());
+    // Add this line:
+    localStorage.setItem('r_last_module_v9', activeModule); 
+}, [meals, activities, prePlan, notes, shoppingList, ramadanDay, activeModule]);
+
+            const addMealItem = (dIdx, type, sIdx) => {
+                const n = [...meals];
+                n[dIdx][type][sIdx].push("");
+                setMeals(n);
+            };
+            const updateMealText = (dIdx, type, sIdx, iIdx, txt) => {
+                const n = [...meals];
+                n[dIdx][type][sIdx][iIdx] = txt;
+                setMeals(n);
+            };
+            const handleMealClick = (dIdx, type, sIdx, iIdx) => {
+                if (!selectedMeal) { setSelectedMeal({ dIdx, type, sIdx, iIdx }); }
+                else {
+                    const n = [...meals];
+                    const movingValue = n[selectedMeal.dIdx][selectedMeal.type][selectedMeal.sIdx].splice(selectedMeal.iIdx, 1)[0];
+                    n[dIdx][type][sIdx].splice(iIdx, 0, movingValue);
+                    setMeals(n); setSelectedMeal(null);
+                }
+            };
+
+            const cycleStatus = (actId, sIdx) => {
+                setActivities(activities.map(a => {
+                    if (a.id !== actId) return a;
+                    const ns = [...a.supplies];
+                    const cur = STATUS_TYPES.findIndex(st => st.id === ns[sIdx].status);
+                    ns[sIdx].status = STATUS_TYPES[(cur + 1) % STATUS_TYPES.length].id;
+                    return { ...a, supplies: ns };
+                }));
+            };
+
+            const getActIcons = (act) => {
+                if (!act.supplies?.length) return null;
+                const statuses = act.supplies.map(s => s.status);
+                const allReady = statuses.every(s => s === 'ready');
+                const hasSomeReady = statuses.some(s => s === 'ready');
+                const readyColor = STATUS_TYPES[0].color;
+                
+                if (allReady) {
+                    return (<span style={!act.day ? { color: readyColor } : {}} className={`${act.day ? 'text-white' : ''} opacity-60`}>{STATUS_TYPES[0].icon}</span>);
+                }
+
+                const uniqueNeeded = [...new Set(statuses)].filter(s => s !== 'ready');
+                return (
+                    <div className="flex gap-1.5 items-center">
+                        {hasSomeReady && (<span style={{ color: readyColor }} className="opacity-60 scale-75">{STATUS_TYPES[0].icon}</span>)}
+                        {uniqueNeeded.map(u => {
+                            const type = STATUS_TYPES.find(st => st.id === u);
+                            return (<span key={u} style={{ color: type.color }} className="opacity-80 scale-75">{type.icon}</span>);
+                        })}
+                    </div>
+                );
+            };
+
+            return (
+                <div className="w-full">
+                    
+<nav className="nav-blur px-4 pt-4 pb-2 flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center">
+        <span className="text-[20px] font-bold tracking-[0.3em] text-[#7c9082] uppercase">Ramadan 1447</span>
+    </div>
+    
+    <div className="grid grid-cols-6 gap-2 bg-sage/40 p-1.5 rounded-[24px] border border-sage-primary/10 w-full max-w-md">
+        {['today', 'meals', 'activities', 'preplan', 'notes'].map((m, idx) => (
+            <button 
+                key={m}
+                onClick={() => setActiveModule(m)}
+                className={`
+                    px-2 py-2.5 rounded-full text-[10px] font-bold tracking-widest uppercase transition-all
+                    ${activeModule === m ? 'bg-[#d1dad2] text-[var(--text-muted)]' : 'text-sage-primary hover:bg-[var(--sage-card)]'}
+                    ${idx < 3 ? 'col-span-2' : 'col-span-3'}
+                `}
+            >
+                {m}
+            </button>
+        ))}
+    </div>
+</nav>
+
+
+
+                    <main className="p-4 md:p-6 max-w-5xl mx-auto w-full">
+                        
+                                          {/* MODULE: TODAY */}
+{activeModule === 'today' && (
+    <div className="max-w-2xl mx-auto space-y-4 animate-in fade-in duration-700">
+        {/* Day Selector Header */}
+        <div className="text-center space-y-0">
+            <div className="flex flex-col items-center">
+                <h1 className="text-3xl font-light text-sage-dark opacity-40 tracking-tighter">day {ramadanDay}</h1>
+            </div>
+            <div className="px-10">
+                <input 
+                    type="range" 
+                    min="1" 
+                    max="30" 
+                    value={ramadanDay} 
+                    onChange={(e) => setRamadanDay(parseInt(e.target.value))} 
+                    className="w-full" 
+                />
+            </div>
+        </div>
+        
+                                                               
+{/* Activity Spotlight */}
+        {(() => {
+            const todayAct = activities.find(a => a.day === ramadanDay);
+            if (!todayAct) return (
+                <div className="pill-card p-5 border-dashed border-sage-primary/20 bg-transparent flex items-center justify-center">
+                    <span className="text-[#b5ada8] font-light italic">No activity scheduled for today</span>
+                </div>
+            );
+
+            const isAllReady = todayAct.supplies?.length > 0 && todayAct.supplies.every(s => s.status === 'ready');
+
+            return (
+                <div className={`pill-card p-5 transition-all duration-500 ${
+                    isAllReady ? 'bg-[#7c9082]' : 'bg-[var(--sage-card)] shadow-sm'
+                }`}>
+                    <div className="flex justify-between items-start mb-4">
+                        <span className={`text-[10px] font-bold uppercase tracking-widest opacity-60 ${
+                            isAllReady ? 'text-[var(--sage-bg)]' : 'text-sage-primary'
+                        }`}>Activity</span>
+                        <div className="flex gap-2">
+                            {getActIcons(todayAct)}
+                        </div>
+                    </div>
+                    
+                    <h2 className={`text-1xl font-medium tracking-tight mb-2 transition-colors ${
+                        isAllReady ? 'text-[var(--sage-bg)]' : 'text-sage-dark'
+                    }`}>
+                        {todayAct.name}
+                    </h2>
+
+                    <div className="flex flex-wrap gap-2">
+                        {todayAct.supplies.map((s, i) => {
+                            // Find the specific color for this supply's status
+                            const statusInfo = STATUS_TYPES.find(st => st.id === s.status) || STATUS_TYPES[1];
+                            const statusColor = statusInfo.color;
+
+                            return (
+                                <span 
+                                    key={i} 
+                                    className={`px-3 py-1 rounded-full text-[10px] border transition-all duration-300 ${
+                                        isAllReady
+                                        ? 'border-white/20 bg-sage-card/10 text-[var(--sage-bg)]' 
+                                        : 'bg-sage-bg/30'
+                                    }`}
+                                    style={!isAllReady ? { borderColor: `${statusColor}44`, color: statusColor } : {}}
+                                >
+                                    {s.itemName}
+                                </span>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        })()}
+
+        {/* Meal Layout */}
+<div className="pill-card p-5">
+    <div className="flex items-center gap-4 mb-4">
+        <div className="h-[1px] flex-grow bg-sage-primary/10"></div>
+        <span className="text-[10px] font-bold tracking-[0.3em] text-sage-primary uppercase">Meal plan</span>
+        <div className="h-[1px] flex-grow bg-sage-primary/10"></div>
+    </div>
+
+    <div className="grid grid-cols-2 gap-3 relative">
+        {/* Vertical Divider Line */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-sage-primary/5 -translate-x-1/2 hidden md:block"></div>
+
+        {/* Adults Column */}
+        <div className="space-y-4">
+            <div className="flex flex-col items-start gap-1">
+                <span className="text-[10px] font-black text-sage-primary/40 uppercase tracking-[0.2em]">Adults</span>
+            </div>
+            {['Suhoor', 'Iftar'].map((label, i) => (
+                <div key={label} className="group">
+                    <p className="text-[9px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
+                    <p className="text-sm text-text-main font-light leading-relaxed">
+                        {meals[ramadanDay-1].adult[i].filter(x => x).join(' • ') || "—"}
+                    </p>
+                </div>
+            ))}
+        </div>
+
+        {/* Kids Column */}
+        <div className="space-y-4">
+            <div className="flex flex-col items-start gap-1">
+                <span className="text-[10px] font-black text-sage-primary/40 uppercase tracking-[0.2em]">Kids</span>
+            </div>
+            {['Breakfast', 'Lunch', 'Dinner'].map((label, i) => (
+                <div key={label} className="group">
+                    <p className="text-[9px] font-bold text-sage-primary uppercase mb-2 opacity-70">{label}</p>
+                    <p className="text-sm text-text-main font-light leading-relaxed">
+                        {meals[ramadanDay-1].kids[i].filter(x => x).join(' • ') || "—"}
+                    </p>
+                </div>
+            ))}
+        </div>
+    </div>
+</div>
+
+        {/* Muted Notes Reflection */}
+        {notes.filter(n => parseInt(n.assignedDay) === ramadanDay).map(n => (
+            <div key={n.id} className="pill-card p-4 bg-sage-bg/40 border-none">
+                <div className="flex items-center gap-2 mb-2 opacity-50">
+                    <span className="text-[18px]">✧</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest">{n.title || "Reflection"}</span>
+                </div>
+                <p className="text-sm text-sage-dark font-light italic leading-relaxed whitespace-pre-wrap">
+                    "{n.content}"
+                </p>
+            </div>
+        ))}
+    </div>
+)}
+{/* MODULE: MEALS */}
+{activeModule === 'meals' && (
+    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        {/* Controls & Shopping List Header */}
+        <div className="flex flex-col md:flex-row gap-3 items-start">
+            <div className="pill-card p-4 flex items-center gap-3 flex-grow">
+                <div className="flex flex-col">
+                    <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase">Week Starting</span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-light text-text-muted">Day</span>
+                        <input 
+                            type="text" 
+                            inputMode="numeric" 
+                            value={mealStartDay === 0 ? "" : mealStartDay} 
+                            onChange={(e) => { const v = e.target.value; setMealStartDay(v === "" ? 0 : Math.min(24, parseInt(v) || 0)); }}
+                            onBlur={() => setMealStartDay(Math.max(1, mealStartDay || 1))}
+                            className="w-10 text-lg font-medium text-sage-dark bg-transparent border-b border-sage-primary/20 focus:outline-none" 
+                        />
+                    </div>
+                </div>
+                <div className="h-10 w-[1px] bg-sage-primary/10"></div>
+                <p className="text-xs text-text-muted text-justify leading-relaxed max-w-[200px] font-light italic">
+                    So eat from the lawful and good things Allah provided for you, and be thankful for Allah’s favor - if it is Him that you worship.
+<span className="block text-right">Quran 16:114</span>
+                </p>                
+            </div>
+
+            <div className="w-full md:w-80 group">
+                <div className="pill-card p-4 bg-sage-bg/30 hover:shadow-md transition-shadow">
+                    <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase mb-3 block">Shopping List</span>
+                    <textarea 
+                        className="w-full bg-[#f0f3f0] text-sm font-light text-text-main outline-none min-h-[100px] placeholder-[#b5ada8] resize-none" 
+                        placeholder="Add items needed..." 
+                        value={shoppingList} 
+                        onChange={(e) => setShoppingList(e.target.value)} 
+                    />
+                </div>
+            </div>
+        </div>
+
+        {/* Weekly Grid */}
+<div className="pill-card overflow-hidden">
+    <div className="overflow-x-auto hide-scrollbar">
+        <table className="w-full border-collapse table-fixed">
+            <thead>
+                <tr className="bg-sage-bg/30">
+                    {/* Changed text-left to text-center */}
+                    <th className="px-6 py-4 text-right text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-16">Day</th>
+                    <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[35%]">Adults</th>
+                    <th className="px-6 py-4 text-center text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase w-[42%]">Kids</th>
+                </tr>
+            </thead>
+            <tbody className="">
+                {meals.slice(mealStartDay - 1, mealStartDay + 6).map((day) => {
+                    const dIdx = day.id - 1;
+                    return (
+                        <tr key={day.id} className="hover:bg-sage-bg/10 transition-colors">
+                            {/* Changed text-right to text-center and ensured vertical alignment */}
+                            <td className="px-6 py-4 align-top text-center w-16">
+                                <span className="text-lg font-light text-sage-dark opacity-40">{day.id}</span>
+                            </td>
+                            
+                            {/* Adult Section */}
+                            <td className="px-6 py-4 align-top space-y-4">
+                                {['Suhoor', 'Iftar'].map((label, sIdx) => (
+                                    <div 
+                                        key={label} 
+                                        className="space-y-2 min-h-[60px] group"
+                                        onClick={() => {
+                                            if (selectedMeal) {
+                                                handleMealClick(dIdx, 'adult', sIdx, day.adult[sIdx].length);
+                                            }
+                                        }}
+                                    >
+                                        <div className="flex justify-between items-center w-full">
+                                            <span className="text-[9px] font-bold text-sage-primary/50 uppercase">{label}</span>
+                                            <button 
+                                                onClick={(e) => { 
+                                                    e.stopPropagation(); 
+                                                    addMealItem(dIdx, 'adult', sIdx); 
+                                                }} 
+                                                className="text-[#b5ada8]"
+                                            >
+                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        {day.adult[sIdx].map((it, iIdx) => (
+                                            <div 
+                                                key={iIdx} 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleMealClick(dIdx, 'adult', sIdx, iIdx);
+                                                }}
+                                                className={`flex items-center gap-2 p-2 rounded-xl transition-all ${selectedMeal?.dIdx === dIdx && selectedMeal?.type === 'adult' && selectedMeal?.sIdx === sIdx && selectedMeal?.iIdx === iIdx ? 'selected-item' : 'bg-sage-bg/30 hover:bg-sage-bg/60'}`}
+                                            >
+                                                <input 
+                                                    className="bg-transparent text-sm font-light text-text-main outline-none w-full" 
+                                                    value={it} 
+                                                    onChange={(e) => updateMealText(dIdx, 'adult', sIdx, iIdx, e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            setSelectedMeal(null);
+                                                            e.target.blur();
+                                                        }
+                                                    }}
+                                                    placeholder="..."
+                                                />
+                                                <button 
+                                                    onClick={(e) => { 
+                                                        e.stopPropagation(); 
+                                                        const n = [...meals]; 
+                                                        n[dIdx].adult[sIdx].splice(iIdx, 1); 
+                                                        setMeals(n); 
+                                                    }} 
+                                                    className="text-[#b5ada8]"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ))}
+                            </td>
+
+                            {/* Kids Section */}
+                            <td className="px-6 py-4 align-top space-y-4 bg-sage-bg/5">
+                                {['Breakfast', 'Lunch', 'Dinner'].map((label, sIdx) => (
+                                    <div 
+                                        key={label} 
+                                        className="space-y-2 min-h-[60px]"
+                                        onClick={() => {
+                                            if (selectedMeal) {
+                                                handleMealClick(dIdx, 'kids', sIdx, day.kids[sIdx].length);
+                                            }
+                                        }}
+                                    >
+                                        <div className="flex justify-between items-center w-full">
+                                            <span className="text-[9px] font-bold text-sage-primary/40 uppercase">{label}</span>
+                                            <button 
+                                                onClick={(e) => { 
+                                                    e.stopPropagation(); 
+                                                    addMealItem(dIdx, 'kids', sIdx); 
+                                                }} 
+                                                className="text-[#b5ada8]"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                        {day.kids[sIdx].map((it, iIdx) => (
+                                            <div 
+                                                key={iIdx} 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleMealClick(dIdx, 'kids', sIdx, iIdx);
+                                                }}
+                                                className={`flex items-center gap-2 p-2 rounded-xl transition-all ${selectedMeal?.dIdx === dIdx && selectedMeal?.type === 'kids' && selectedMeal?.sIdx === sIdx && selectedMeal?.iIdx === iIdx ? 'selected-item' : 'bg-sage-bg/50 hover:bg-[var(--sage-card)]'}`}
+                                            >
+                                                <input 
+                                                    className="bg-transparent text-xs font-light text-text-main outline-none w-full" 
+                                                    value={it} 
+                                                    onChange={(e) => updateMealText(dIdx, 'kids', sIdx, iIdx, e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            setSelectedMeal(null);
+                                                            e.target.blur();
+                                                        }
+                                                    }}
+                                                />
+                                                <button 
+                                                    onClick={(e) => { 
+                                                        e.stopPropagation(); 
+                                                        const n = [...meals]; 
+                                                        n[dIdx].kids[sIdx].splice(iIdx, 1); 
+                                                        setMeals(n); 
+                                                    }} 
+                                                    className="text-[#b5ada8]"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ))}
+                            </td>
+                        </tr>
+                    );
+                })}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+    </div>
+)}
+{/* MODULE: ACTIVITIES */}
+{activeModule === 'activities' && (
+    <div className="grid lg:grid-cols-4 gap-4 animate-in fade-in duration-700">
+        
+        {/* Sidebar: Activity Library */}
+        <div className="lg:col-span-1 space-y-6">
+            <div className="space-y-4 px-2 mb-6">
+                
+                <div className="relative group">
+                    <input 
+                        type="text"
+                        placeholder="New activity name..."
+                        value={newActivityName}
+                        onChange={(e) => setNewActivityName(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && newActivityName.trim()) {
+                                setActivities([...activities, { id: Date.now(), name: newActivityName, day: null, supplies: [] }]);
+                                setNewActivityName("");
+                            }
+                        }}
+                        className="w-full bg-[var(--sage-card)] border border-[#b5ada8] rounded-2xl py-3 px-4 text-sm text-sage-dark placeholder-[#b5ada8] outline-none hover:border-[#7c9082] transition-all"
+                    />
+                    <button 
+                        onClick={() => {
+                            if (newActivityName.trim()) {
+                                setActivities([...activities, { id: Date.now(), name: newActivityName, day: null, supplies: [] }]);
+                                setNewActivityName("");
+                            }
+                        }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-sage-primary text-sage-primary flex items-center justify-center hover:scale-105 active:scale-95 transition-all"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div className="px-6 py-3 space-y-3">
+    {activities.filter(a => !a.day).map(act => {
+        const isSelected = selectedActivity?.id === act.id;
+        return (
+            <div key={act.id} 
+                 onClick={() => setSelectedActivity(isSelected ? null : act)} 
+                 className={`pill-card p-5 cursor-pointer transition-all duration-300 outline-none ${
+                     isSelected 
+                     ? 'bg-[#7c9082] text-white scale-[1.02]' 
+                     : 'hover:bg-sage-card bg-[var(--sage-card)]'
+                 }`}>
+                <p className={`text-sm font-medium mb-3 leading-snug ${isSelected ? 'text-white' : 'text-sage-dark'}`}>{act.name}</p>
+                <div className="flex justify-between items-center">
+                    <div className="flex gap-1.5">{getActIcons(act)}</div>
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); setEditingActivity(act); }} 
+                        className={`text-[10px] font-bold uppercase tracking-tighter ${isSelected ? 'text-white/80' : 'text-sage-primary/60 hover:text-sage-primary'}`}
+                    >
+                        Details
+                    </button>
+                </div>
+            </div>
+        );
+    })}
+</div>        
+</div>
+
+        {/* 30-Day Grid */}
+        <div className="lg:col-span-3">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {Array.from({length:30}, (_, i) => i + 1).map(d => {
+                    const dayAct = activities.find(a => a.day === d);
+                    const isReady = dayAct?.supplies?.length > 0 && dayAct.supplies.every(s => s.status === 'ready');
+                    const isBeingTargeted = !!selectedActivity;
+                    
+                    return (
+                        <div key={d} 
+                            onClick={() => {
+                                if (selectedActivity) {
+                                    setActivities(activities.map(a => a.id === selectedActivity.id ? { ...a, day: d } : a));
+                                    setSelectedActivity(null);
+                                } else if (dayAct) {
+                                    setEditingActivity(dayAct);
+                                }
+                            }}
+                            className={`pill-card p-5 min-h-[130px] cursor-pointer transition-all duration-300 flex flex-col justify-between group outline-none
+                                ${dayAct 
+                                    ? (isReady ? 'bg-[#7c9082] text-white' : 'bg-sage-card shadow-sm') 
+                                    : (isBeingTargeted ? 'bg-[#7c9082]/10 border-2 border-dashed border-[#7c9082]' : 'bg-sage-bg/40 border-dashed border-sage-primary/10 hover:bg-sage-card')
+                                }
+                            `}
+                        >
+                            <div className="flex justify-between items-start">
+                                <span className={`text-[10px] font-bold tracking-tighter ${dayAct || isBeingTargeted ? 'opacity-60' : 'opacity-20'}`}>
+                                    {d < 10 ? `0${d}` : d}
+                                </span>
+                                {dayAct && (
+                                    <button onClick={(e) => {
+                                        e.stopPropagation();
+                                        setActivities(activities.map(a => a.id === dayAct.id ? { ...a, day: null } : a));
+                                    }} className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] hover:scale-125">✕</button>
+                                )}
+                            </div>
+
+                            {dayAct ? (
+                                <div className="space-y-3">
+                                    <p className="text-xs font-medium leading-tight">{dayAct.name}</p>
+                                    <div className="flex flex-wrap gap-1">{getActIcons(dayAct)}</div>
+                                </div>
+                            ) : (
+                                isBeingTargeted && (
+                                    <div className="flex-grow flex items-center justify-center animate-pulse">
+                                        <span className="text-[9px] font-bold text-[#7c9082] uppercase tracking-widest">Assign Here</span>
+                                    </div>
+                                )
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    </div>
+)}
+{/* MODULE: PREPLAN */}
+{activeModule === 'preplan' && (
+    <div className="animate-in fade-in duration-700">
+        <div className="pill-card p-5 space-y-2 min-h-[80vh] overflow-y-auto hide-scrollbar border-none shadow-sm">
+            {prePlan.map((item, idx) => (
+                <div key={item.day} className={`flex items-center gap-2 p-3 rounded-2xl transition-colors ${item.completed ? 'bg-sage-bg/20' : 'hover:bg-sage-bg/40'}`}>
+                    <span className="text-xl font-light text-sage-dark opacity-75 w-10 shrink-0 text-right mr-6">{item.day}</span>
+                    <button 
+                        onClick={() => {const n=[...prePlan]; n[idx].completed=!n[idx].completed; setPrePlan(n);}}
+                        className={`w-2 h-2 shrink-0 rounded-full border transition-all flex items-center justify-center ${item.completed ? 'bg-sage-primary border-sage-primary' : 'border-sage-primary/20'}`}
+                    >
+                        {item.completed && <span className="text-[#b5ada8] text-xl">✓</span>}
+                    </button>
+                    <input 
+                        className={`text-lg flex-grow bg-transparent outline-none font-light transition-all placeholder-[#b5ada8] ${item.completed ? 'text-[#b5ada8] line-through decoration-[#b5ada8]' : 'text-sage-dark'}`}
+                        value={item.task} 
+                        placeholder="Task..."
+                        onChange={(e) => {const n=[...prePlan]; n[idx].task=e.target.value; setPrePlan(n);}} 
+                    />
+                </div>
+            ))}
+        </div>
+    </div>
+)}
+{/* MODULE: NOTES */}
+{activeModule === 'notes' && (
+    <div className="space-y-4 animate-in fade-in duration-700">
+        <div className="flex justify-between items-end px-4">
+            <div className="flex flex-col">
+                
+            </div>
+            <button 
+                onClick={()=>setNotes([...notes,{id:Date.now(),title:"",content:"",assignedDay:""}])} 
+                className="px-6 py-2 bg-sage-primary text-white/70 text-[11px] font-bold tracking-widest bg-[#7c9082] uppercase rounded-full hover:scale-105 transition-transform"
+            >
+                + new note
+            </button>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {notes.map((n, i) => (
+                <div key={n.id} className="pill-card p-5 flex flex-col gap-3 group hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-start">
+    <input 
+        className="font-medium text-sage-dark text-lg bg-transparent outline-none placeholder-[#b5ada8] w-full" 
+        value={n.title} 
+        onChange={(e)=>{const x=[...notes];x[i].title=e.target.value;setNotes(x);}} 
+        placeholder="Title" 
+    />
+    <div className="flex flex-col items-end">
+        <span className="text-[8px] font-bold text-text-muted uppercase text-center w-full tracking-tighter">Day</span>
+        <input 
+            type="text" 
+            inputMode="numeric" 
+            className="w-8 bg-[var(--sage-bg)] rounded-lg text-center text-xs font-bold text-sage-primary p-1 outline-none" 
+            value={n.assignedDay} 
+            onChange={(e)=>{const x=[...notes];x[i].assignedDay=e.target.value;setNotes(x);}} 
+        />
+    </div>
+</div>
+<textarea 
+    className="text-sm font-light text-text-muted bg-transparent outline-none min-h-[120px] resize-none leading-relaxed placeholder-[#b5ada8]" 
+    value={n.content} 
+    onChange={(e)=>{const x=[...notes];x[i].content=e.target.value;setNotes(x);}} 
+    placeholder="Begin writing" 
+/>
+
+                    <button 
+                        onClick={()=>setNotes(notes.filter(x=>x.id!==n.id))} 
+                        className="opacity-0 group-hover:opacity-100 text-[10px] font-bold text-[#b5ada8] uppercase tracking-widest transition-opacity text-right"
+                    >
+                        Delete
+                    </button>
+                </div>
+            ))}
+        </div>
+    </div>
+)}
+
+                    </main>
+
+                    {/* MODAL: ACTIVITY DETAIL */}
+                    {editingActivity && (
+                        <div className="fixed inset-0 bg-[#4a5750]/40 backdrop-blur-md z-[100] flex items-center justify-center p-6">
+                            <div className="pill-card w-full max-w-lg p-6 space-y-4 relative shadow-2xl">
+                                <button onClick={() => setEditingActivity(null)} className="absolute top-8 right-8 text-sage-primary hover:text-sage-dark text-xl">✕</button>
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[10px] font-bold text-sage-primary uppercase tracking-widest opacity-60">Edit Activity</span>
+                                        {editingActivity.day && (
+                                            <button onClick={() => {setActivities(activities.map(a => a.id === editingActivity.id ? { ...a, day: null } : a)); setEditingActivity(null);}} className="text-[9px] font-bold bg-sage-bg px-3 py-1.5 rounded-full text-sage-primary uppercase tracking-widest hover:bg-sage-primary hover:text-[var(--text-muted)] transition-all shadow-sm">⟲ Move to Library</button>
+                                        )}
+                                    </div>
+                                    <input className="text-3xl font-light text-sage-dark bg-transparent outline-none w-full border-b border-sage-primary/10 pb-2" value={editingActivity.name} onChange={(e) => {const v = e.target.value; setActivities(activities.map(a => a.id === editingActivity.id ? { ...a, name: v } : a)); setEditingActivity({ ...editingActivity, name: v });}} />
+                                </div>
+                                <div className="space-y-6">
+                                    <div className="space-y-4">
+    <span className="text-[11px] font-bold text-sage-dark tracking-widest uppercase">Supplies Checklist</span>
+    <div className="flex gap-2">
+        <input 
+    id="new-supply-input"
+    type="text" 
+    placeholder="Add a supply..."
+    style={{ backgroundColor: '#f0f3f0' }} // Forces the exact color
+    className="flex-grow border border-[#b5ada8] rounded-xl py-3 px-4 text-sm text-sage-dark placeholder-[#b5ada8] outline-none focus: transition-all"
+    onKeyDown={(e) => {
+        if (e.key === 'Enter' && e.target.value.trim()) {
+            const val = e.target.value;
+            const nA = activities.map(a => a.id === editingActivity.id ? { ...a, supplies: [...a.supplies, { itemName: val, status: 'buy' }] } : a);
+            setActivities(nA);
+            setEditingActivity(nA.find(a => a.id === editingActivity.id));
+            e.target.value = "";
+        }
+    }}
+/>
+    </div>
+</div>
+                                    <div className="max-h-[300px] overflow-auto space-y-3 pr-2">
+                                        {(activities.find(a => a.id === editingActivity.id)?.supplies || []).map((s, idx) => {
+                                            const type = STATUS_TYPES.find(st => st.id === s.status);
+                                            return (
+                                                <div key={idx} className="flex items-center gap-4 bg-sage-bg/40 p-4 rounded-[24px]">
+                                                    <button onClick={() => cycleStatus(editingActivity.id, idx)} className="w-10 h-10 rounded-full bg-[var(--sage-bg)] shadow-sm flex items-center justify-center" style={{ color: type.color }}>{type.icon}</button>
+                                                    <div className="flex flex-col flex-grow"><span className="text-sm font-medium text-sage-dark">{s.itemName}</span><span style={{ color: type.color }} className="text-[9px] font-bold uppercase tracking-tighter">{type.label}</span></div>
+                                                    <button onClick={() => {const n = [...activities.find(a => a.id === editingActivity.id).supplies]; n.splice(idx, 1); setActivities(activities.map(a => a.id === editingActivity.id ? { ...a, supplies: n } : a))}} className="text-text-muted hover:text-text-muted">✕</button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                                <div className="pt-4">
+    {!isDeleting ? (
+        <button 
+            onClick={() => setIsDeleting(true)} 
+            className="w-full text-sage-primary/60 text-[10px] font-bold uppercase py-4 border border-sage-primary/10 rounded-full hover:bg-sage-bg/50 transition-all"
+        >
+            Remove Activity
+        </button>
+    ) : (
+        <div className="flex gap-3 animate-in fade-in duration-300">
+            <button 
+                onClick={() => {
+                    setActivities(activities.filter(a => a.id !== editingActivity.id)); 
+                    setEditingActivity(null);
+                    setIsDeleting(false);
+                }} 
+                className="flex-grow bg-[#4a5750] text-[#e1e7e1] text-[10px] font-bold uppercase py-4 rounded-full shadow-sm hover:opacity-90 transition-opacity"
+            >
+                Confirm Removal
+            </button>
+            <button 
+                onClick={() => setIsDeleting(false)} 
+                className="px-8 bg-transparent text-[#b5ada8] text-[10px] font-bold uppercase py-4 rounded-full border border-[#b5ada8]/20 hover:bg-sage-card/20 transition-all"
+            >
+                Keep
+            </button>
+        </div>
+    )}    
+</div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>    
+</body>
+</html>
