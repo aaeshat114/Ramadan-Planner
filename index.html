@@ -738,7 +738,7 @@ const STATUS_TYPES = [
         <div className="pill-card p-5 space-y-2 min-h-[80vh] overflow-y-auto hide-scrollbar border-none shadow-sm">
             {prePlan.map((item, idx) => (
                 <div key={item.day} className={`flex items-center gap-2 p-3 rounded-2xl transition-colors ${item.completed ? 'bg-sage-bg/20' : 'hover:bg-sage-bg/40'}`}>
-                    <span className="text-xl font-light text-sage-dark opacity-75 w-6 shrink-0 text-right mr-6">{item.day}</span>
+                    <span className="text-xl font-light text-sage-dark opacity-75 w-4 shrink-0 text-right mr-6">{item.day}</span>
                     <button 
                         onClick={() => {const n=[...prePlan]; n[idx].completed=!n[idx].completed; setPrePlan(n);}}
                         className={`w-2 h-2 shrink-0 rounded-full border transition-all flex items-center justify-center ${item.completed ? 'bg-sage-primary border-sage-primary' : 'border-sage-primary/20'}`}
