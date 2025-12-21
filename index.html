@@ -741,11 +741,7 @@ const STATUS_TYPES = [
         <div className="pill-card p-5 space-y-2 min-h-[80vh] overflow-y-auto hide-scrollbar border-none shadow-sm">
             {prePlan.map((item, idx) => (
                 <div key={item.day} className={`flex items-center gap-2 p-3 rounded-2xl transition-colors ${item.completed ? 'bg-sage-bg/20' : 'hover:bg-sage-bg/40'}`}>
-                    <span className={`text-xl font-light w-10 shrink-0 text-right mr-6 transition-colors ${
-    item.completed ? 'text-[#b5ada8]' : 'text-sage-dark opacity-75'
-}`}>
-    {item.day}
-</span>
+                    <span className={`text-xl font-light w-6 shrink-0 text-right mr-6 transition-colors ${item.completed ? 'text-[#b5ada8]' : 'text-sage-dark opacity-75'}`}>{item.day}</span>
                     <button 
                         onClick={() => {const n=[...prePlan]; n[idx].completed=!n[idx].completed; setPrePlan(n);}}
                         className={`w-2 h-2 shrink-0 rounded-full border transition-all flex items-center justify-center ${item.completed ? 'bg-sage-primary border-sage-primary' : 'border-sage-primary/20'}`}
@@ -753,7 +749,7 @@ const STATUS_TYPES = [
                         {item.completed && <span className="text-[#b5ada8] text-xl">✓</span>}
                     </button>
                     <input 
-                        className={`text-[14px] flex-grow bg-transparent outline-none font-light transition-all placeholder-[#b5ada8] ${item.completed ? 'text-[#b5ada8] line-through decoration-[#b5ada8]' : 'text-sage-dark'}`}
+                        className={`text-[15px] flex-grow bg-transparent outline-none font-light transition-all placeholder-[#b5ada8] ${item.completed ? 'text-[#b5ada8] line-through decoration-[#b5ada8]' : 'text-sage-dark'}`}
                         value={item.task} 
                         placeholder={L.task}
                         onChange={(e) => {const n=[...prePlan]; n[idx].task=e.target.value; setPrePlan(n);}} 
