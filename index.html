@@ -372,12 +372,12 @@ const STATUS_TYPES = [
         {/* Adults Column */}
         <div className="space-y-6">
             <div className="flex flex-col items-start gap-1">
-                <span className="text-[10px] fold-bold text-sage-primary tracking [0.2em] uppercase">{L.adults}</span>
+                <span className="text-right text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase">{L.adults}</span>
             </div>
             {[L.suhoor, L.iftar].map((label, i) => (
                 <div key={label} className="group">
-                    <p className="text-[9px] text-[ff0000] font-bold text-sage-primary/40 uppercase">{label}</p>
-                    <p className="text-[14px] text-[ffff00] text-text-main font-light leading-relaxed">
+                    <p className="text-[9px] font-bold text-sage-primary/40 uppercase">{label}</p>
+                    <p className="text-[14px] text-text-main font-light leading-relaxed">
                         {meals[ramadanDay-1].adult[i].filter(x => x).join(' • ') || "—"}
                     </p>
                 </div>
@@ -387,7 +387,7 @@ const STATUS_TYPES = [
         {/* Kids Column */}
         <div className="space-y-6">
             <div className="flex flex-col items-start gap-1">
-                <span className="text-[10px] fold-bold text-sage-primary tracking [0.2em] uppercase">{L.kids}</span>
+                <span className="text-right text-[10px] font-bold tracking-[0.2em] text-sage-primary uppercase">{L.kids}</span>
             </div>
             {[L.breakfast, L.lunch, L.dinner].map((label, i) => (
                 <div key={label} className="group">
