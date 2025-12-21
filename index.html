@@ -432,7 +432,7 @@ const STATUS_TYPES = [
                 value={mealStartDay === 0 ? "" : mealStartDay} 
                 onChange={(e) => { const v = e.target.value; setMealStartDay(v === "" ? 0 : Math.min(24, parseInt(v) || 0)); }}
                 onBlur={() => setMealStartDay(Math.max(1, mealStartDay || 1))}
-                className="w-7 text-lg font-light text-dark-sage opacity-40 bg-transparent border-b-2 border-[#7c9082] focus:border-[#7c9082] focus:outline-none pb-0 transition-all" 
+                className="w-7 text-lg text-center font-light text-dark-sage opacity-40 bg-transparent border-b-2 border-[#7c9082] focus:border-[#7c9082] focus:outline-none pb-0 transition-all" 
             />
         </div>
     </div>
