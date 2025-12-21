@@ -749,7 +749,7 @@ const STATUS_TYPES = [
                         {item.completed && <span className="text-[#b5ada8] text-xl">✓</span>}
                     </button>
                     <input 
-                        className={`text-lg flex-grow bg-transparent outline-none font-light transition-all placeholder-[#b5ada8] ${item.completed ? 'text-[#b5ada8] line-through decoration-[#b5ada8]' : 'text-sage-dark'}`}
+                        className={`text-[14px] flex-grow bg-transparent outline-none font-light transition-all placeholder-[#b5ada8] ${item.completed ? 'text-[#b5ada8] line-through decoration-[#b5ada8]' : 'text-sage-dark'}`}
                         value={item.task} 
                         placeholder={L.task}
                         onChange={(e) => {const n=[...prePlan]; n[idx].task=e.target.value; setPrePlan(n);}} 
