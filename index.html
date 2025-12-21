@@ -421,30 +421,33 @@ const STATUS_TYPES = [
         {/* Controls & Shopping List Header */}
         <div className="flex flex-col md:flex-row gap-3 items-start">
             <div className="pill-card w-full p-4 flex items-center gap-3 flex-grow">
-                <div className="flex flex-col">
-                    <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase">{L.weekStart}</span>
-                    <div className="flex items-center gap-2">
-                        <span className="text-lg font-light text-dark-sage opacity-40">{L.Day}</span>
-                        <input 
-    type="text" 
-    inputMode="numeric" 
-    value={mealStartDay === 0 ? "" : mealStartDay} 
-    onChange={(e) => { const v = e.target.value; setMealStartDay(v === "" ? 0 : Math.min(24, parseInt(v) || 0)); }}
-    onBlur={() => setMealStartDay(Math.max(1, mealStartDay || 1))}
-    className="w-7 text-lg font-light text-center text-dark-sage opacity-40 bg-transparent border-b-2 border-[#7c9082] focus:border-[#7c9082] focus:outline-none pb-0 transition-all" 
-/>
+    {/* Left Side: Date Controls */}
+    <div className="flex flex-col">
+        <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase">{L.weekStart}</span>
+        <div className="flex items-center gap-2">
+            <span className="text-lg font-light text-dark-sage opacity-40">{L.Day}</span>
+            <input 
+                type="text" 
+                inputMode="numeric" 
+                value={mealStartDay === 0 ? "" : mealStartDay} 
+                onChange={(e) => { const v = e.target.value; setMealStartDay(v === "" ? 0 : Math.min(24, parseInt(v) || 0)); }}
+                onBlur={() => setMealStartDay(Math.max(1, mealStartDay || 1))}
+                className="w-7 text-lg font-light text-dark-sage opacity-40 bg-transparent border-b-2 border-[#7c9082] focus:border-[#7c9082] focus:outline-none pb-0 transition-all" 
+            />
+        </div>
+    </div>
 
+    {/* The Vertical Divider */}
+    <div className="h-10 w-[1px] bg-sage-primary/10"></div>
 
-
-
-                    </div>
-                </div>
-                <div className="h-10 w-[1px] bg-sage-primary/10"></div>
-                <p className="text-xs text-text-muted text-justify leading-relaxed max-w-[200px] font-light italic">
-                   {L.quote}
-<span className="block text-right">{L.quranRef}</span>
-                </p>                
-            </div>
+    {/* Right Side: Quote (Pinned to the right using ml-auto) */}
+    <div className="ml-auto text-right">
+        <p className="text-xs text-text-muted text-justify leading-relaxed max-w-[200px] font-light italic">
+            {L.quote}
+            <span className="block text-right">{L.quranRef}</span>
+        </p>
+    </div>
+</div>
 
             <div className="w-full md:w-80 group">
                 <div className="pill-card p-4 bg-sage-bg/30 hover:shadow-md transition-shadow">
