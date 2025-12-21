@@ -17,7 +17,7 @@
             --sage-primary: #7c9082;
             --sage-dark: #4a5750;
             --text-main: #706863;
-            --text-placeholder: #b5ada8
+            --text-placeholder: #b5ada8;
             --text-muted: #433B38;
         }
 
@@ -71,7 +71,7 @@
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         .selected-item { 
-            border: 2px solid var(--sage-primary) !important; 
+            border: none var(--sage-primary) !important; 
             background-color: var(--sage-bg) !important; 
         }
     </style>
@@ -307,7 +307,7 @@ const STATUS_TYPES = [
             const todayAct = activities.find(a => a.day === ramadanDay);
             if (!todayAct) return (
                 <div className="pill-card p-5 border-dashed border-sage-primary/20 bg-transparent flex items-center justify-center">
-                    <span className="text-sm text-center text-text-placeholder font-light italic">{L.noAct}</span>
+                    <span className="text-sm text-center text-[#b5ada8] font-light italic">{L.noAct}</span>
                 </div>
             );
 
@@ -376,7 +376,7 @@ const STATUS_TYPES = [
             </div>
             {[L.suhoor, L.iftar].map((label, i) => (
                 <div key={label} className="group">
-                    <p className="text-[10px] font-bold text-sage-primary/40">{label}</p>
+                    <p className="text-[9px] font-bold text-sage-primary/40">{label}</p>
                     <p className="text-[14px] text-text-main font-light leading-relaxed">
                         {meals[ramadanDay-1].adult[i].filter(x => x).join(' • ') || "—"}
                     </p>
@@ -391,7 +391,7 @@ const STATUS_TYPES = [
             </div>
             {[L.breakfast, L.lunch, L.dinner].map((label, i) => (
                 <div key={label} className="group">
-                    <p className="text-[10px] font-bold text-sage-primary/40">{label}</p>
+                    <p className="text-[9px] font-bold text-sage-primary/40">{label}</p>
                     <p className="text-[14px] text-text-main font-light leading-relaxed">
                         {meals[ramadanDay-1].kids[i].filter(x => x).join(' • ') || "—"}
                     </p>
@@ -450,7 +450,7 @@ const STATUS_TYPES = [
                 <div className="pill-card p-4 bg-sage-bg/30 hover:shadow-md transition-shadow">
                     <span className="text-[10px] font-bold tracking-widest text-sage-primary uppercase mb-3 block">{L.shopping}</span>
                     <textarea 
-                        className="w-full bg-[#f0f3f0] text-sm font-light text-text-main outline-none min-h-[100px] placeholder-text-placeholder resize-none" 
+                        className="w-full bg-[#f0f3f0] text-sm font-light text-text-main outline-none min-h-[100px] placeholder-[#b5ada8] resize-none" 
                         placeholder={L.addshop} 
                         value={shoppingList} 
                         onChange={(e) => setShoppingList(e.target.value)} 
@@ -498,7 +498,7 @@ const STATUS_TYPES = [
             e.stopPropagation(); 
             addMealItem(dIdx, 'adult', sIdx); 
         }} 
-        className="text-[11px] font-bold text-text-placeholder"
+        className="text-[11px] font-bold text-[#b5ada8]"
     >
         +
     </button>
@@ -532,7 +532,7 @@ const STATUS_TYPES = [
                                                         n[dIdx].adult[sIdx].splice(iIdx, 1); 
                                                         setMeals(n); 
                                                     }} 
-                                                    className="text-text-placeholder"
+                                                    className="text-[#b5ada8]"
                                                 >
                                                     ×
                                                 </button>
@@ -561,7 +561,7 @@ const STATUS_TYPES = [
                                                     e.stopPropagation(); 
                                                     addMealItem(dIdx, 'kids', sIdx); 
                                                 }} 
-                                                className="text-[11px] font-bold text-text-placeholder"
+                                                className="text-[11px] font-bold text-[#b5ada8]"
                                             >
                                                 +
                                             </button>
@@ -593,7 +593,7 @@ const STATUS_TYPES = [
                                                         n[dIdx].kids[sIdx].splice(iIdx, 1); 
                                                         setMeals(n); 
                                                     }} 
-                                                    className="text-text-placeholder"
+                                                    className="text-[#b5ada8]"
                                                 >
                                                     ×
                                                 </button>
@@ -632,7 +632,7 @@ const STATUS_TYPES = [
                                 setNewActivityName("");
                             }
                         }}
-                        className="w-full bg-[var(--sage-card)] border border-text-placeholder rounded-2xl py-3 px-4 text-sm text-sage-dark placeholder-text-placeholder outline-none hover:border-[#7c9082] transition-all"
+                        className="w-full bg-[var(--sage-card)] border border-[#b5ada8] rounded-2xl py-3 px-4 text-sm text-sage-dark placeholder-[#b5ada8] outline-none hover:border-[#7c9082] transition-all"
                     />
                     <button 
     onClick={() => {
@@ -643,7 +643,7 @@ const STATUS_TYPES = [
     }}
     className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-sage-primary flex items-center justify-center hover:scale-105 active:scale-95 transition-all"
 >
-    <span className="text-[11px] font-bold text-text-placeholder">+</span>
+    <span className="text-[11px] font-bold text-[#b5ada8]">+</span>
 </button>
 
                 </div>
@@ -743,10 +743,10 @@ const STATUS_TYPES = [
                         onClick={() => {const n=[...prePlan]; n[idx].completed=!n[idx].completed; setPrePlan(n);}}
                         className={`w-2 h-2 shrink-0 rounded-full border transition-all flex items-center justify-center ${item.completed ? 'bg-sage-primary border-sage-primary' : 'border-sage-primary/20'}`}
                     >
-                        {item.completed && <span className="text-text-placeholder text-xl">✓</span>}
+                        {item.completed && <span className="text-[#b5ada8] text-xl">✓</span>}
                     </button>
                     <input 
-                        className={`text-lg flex-grow bg-transparent outline-none font-light transition-all placeholder-text-placeholder ${item.completed ? 'text-text-placeholder line-through decoration-text-placeholder' : 'text-sage-dark'}`}
+                        className={`text-lg flex-grow bg-transparent outline-none font-light transition-all placeholder-[#b5ada8] ${item.completed ? 'text-[#b5ada8] line-through decoration-[#b5ada8]' : 'text-sage-dark'}`}
                         value={item.task} 
                         placeholder={L.task}
                         onChange={(e) => {const n=[...prePlan]; n[idx].task=e.target.value; setPrePlan(n);}} 
@@ -776,7 +776,7 @@ const STATUS_TYPES = [
                 <div key={n.id} className="pill-card p-5 flex flex-col gap-3 group hover:shadow-md transition-shadow">
                     <div className="flex justify-between items-start">
     <input 
-        className="font-medium text-sage-dark text-lg bg-transparent outline-none placeholder-text-placeholder w-full" 
+        className="font-medium text-sage-dark text-lg bg-transparent outline-none placeholder-[#b5ada8] w-full" 
         value={n.title} 
         onChange={(e)=>{const x=[...notes];x[i].title=e.target.value;setNotes(x);}} 
         placeholder={L.title} 
@@ -793,7 +793,7 @@ const STATUS_TYPES = [
     </div>
 </div>
 <textarea 
-    className="text-sm font-light text-text-muted bg-transparent outline-none min-h-[120px] resize-none leading-relaxed placeholder-text-placeholder" 
+    className="text-sm font-light text-text-muted bg-transparent outline-none min-h-[120px] resize-none leading-relaxed placeholder-[#b5ada8]" 
     value={n.content} 
     onChange={(e)=>{const x=[...notes];x[i].content=e.target.value;setNotes(x);}} 
     placeholder={L.beginWrite} 
@@ -801,7 +801,7 @@ const STATUS_TYPES = [
 
                     <button 
                         onClick={()=>setNotes(notes.filter(x=>x.id!==n.id))} 
-                        className=" group-hover:opacity-100 text-[10px] font-bold text-text-placeholder uppercase tracking-widest transition-opacity text-right"
+                        className=" group-hover:opacity-100 text-[10px] font-bold text-[#b5ada8] uppercase tracking-widest transition-opacity text-right"
                     >
                         {L.delete}
                     </button>
@@ -822,7 +822,7 @@ const STATUS_TYPES = [
                                     <div className="flex justify-between items-center">
                                         <span className="text-[10px] font-bold text-sage-primary uppercase tracking-widest opacity-60">{L.editAct}</span>
                                     </div>
-                                    <input className="text-3xl font-light text-sage-dark bg-transparent outline-none w-full border-b border-text-placeholder/30 pb-2" value={editingActivity.name} onChange={(e) => {const v = e.target.value; setActivities(activities.map(a => a.id === editingActivity.id ? { ...a, name: v } : a)); setEditingActivity({ ...editingActivity, name: v });}} />
+                                    <input className="text-3xl font-light text-sage-dark bg-transparent outline-none w-full border-b border-[#b5ada8]/30 pb-2" value={editingActivity.name} onChange={(e) => {const v = e.target.value; setActivities(activities.map(a => a.id === editingActivity.id ? { ...a, name: v } : a)); setEditingActivity({ ...editingActivity, name: v });}} />
                                 </div>
                                 <div className="space-y-6">
                                     <div className="space-y-4">
@@ -833,7 +833,7 @@ const STATUS_TYPES = [
     type="text" 
     placeholder={L.addSupply}
     style={{ backgroundColor: '#f0f3f0' }} // Forces the exact color
-    className="flex-grow border border-text-placeholder rounded-xl py-3 px-4 text-sm text-sage-dark placeholder-text-placeholder outline-none focus: transition-all"
+    className="flex-grow border border-[#b5ada8] rounded-xl py-3 px-4 text-sm text-sage-dark placeholder-[#b5ada8] outline-none focus: transition-all"
     onKeyDown={(e) => {
         if (e.key === 'Enter' && e.target.value.trim()) {
             const val = e.target.value;
@@ -866,7 +866,7 @@ const STATUS_TYPES = [
                 setActivities(activities.map(a => a.id === editingActivity.id ? { ...a, day: null } : a)); 
                 setEditingActivity(null);
             }} 
-            className="w-full text-sage-primary/60 text-[10px] font-bold uppercase py-4 border border-text-placeholder/20 rounded-full hover:bg-sage-bg/50 transition-all"
+            className="w-full text-sage-primary/60 text-[10px] font-bold uppercase py-4 border border-[#b5ada8]/20 rounded-full hover:bg-sage-bg/50 transition-all"
         >
             {L.moveToLib}
         </button>
@@ -875,7 +875,7 @@ const STATUS_TYPES = [
     {!isDeleting ? (
         <button 
             onClick={() => setIsDeleting(true)} 
-            className="w-full bg-transparent text-text-placeholder text-[10px] font-bold uppercase py-4 rounded-full border border-text-placeholder/20 hover:bg-sage-card/20 transition-all"
+            className="w-full bg-transparent text-[#b5ada8] text-[10px] font-bold uppercase py-4 rounded-full border border-[#b5ada8]/20 hover:bg-sage-card/20 transition-all"
         >
             {L.removeAct}
         </button>
@@ -893,7 +893,7 @@ const STATUS_TYPES = [
             </button>
             <button 
                 onClick={() => setIsDeleting(false)} 
-                className="px-8 bg-transparent text-text-placeholder text-[10px] font-bold uppercase py-4 rounded-full border border-text-placeholder/20 hover:bg-sage-card/20 transition-all"
+                className="px-8 bg-transparent text-[#b5ada8] text-[10px] font-bold uppercase py-4 rounded-full border border-[#b5ada8]/20 hover:bg-sage-card/20 transition-all"
             >
                 {L.keep}
             </button>
