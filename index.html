@@ -376,8 +376,8 @@ const STATUS_TYPES = [
             </div>
             {[L.suhoor, L.iftar].map((label, i) => (
                 <div key={label} className="group">
-                    <p className="text-[9px] font-bold text-sage-primary/40 uppercase">{label}</p>
-                    <p className="text-[14px] text-text-main font-light leading-relaxed">
+                    <p className="text-[9px] text-[ff0000] font-bold text-sage-primary/40 uppercase">{label}</p>
+                    <p className="text-[14px] text-[ffff00] text-text-main font-light leading-relaxed">
                         {meals[ramadanDay-1].adult[i].filter(x => x).join(' • ') || "—"}
                     </p>
                 </div>
