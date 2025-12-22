@@ -517,7 +517,7 @@ const STATUS_TYPES = [
                                                 className={`flex items-center gap-2 p-2 rounded-xl transition-all ${selectedMeal?.dIdx === dIdx && selectedMeal?.type === 'adult' && selectedMeal?.sIdx === sIdx && selectedMeal?.iIdx === iIdx ? 'selected-item' : 'bg-sage-bg/30 hover:bg-sage-bg/60'}`}
                                             >
                                                 <input 
-                                                    className="bg-transparent text-sm font-light text-text-main outline-none w-full" 
+                                                    className="bg-transparent text-xs font-light text-text-main outline-none w-full" 
                                                     value={it} 
                                                     onChange={(e) => updateMealText(dIdx, 'adult', sIdx, iIdx, e.target.value)}
                                                     onKeyDown={(e) => {
