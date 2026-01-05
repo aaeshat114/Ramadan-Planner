@@ -3,9 +3,9 @@
   "short_name": "Ramadan",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#e3e8e3",
-  "theme_color": "#7C9082",
-  "orientation": "any",
+  "background_color": "#7C9082",
+  "theme_color": "#e3e8e3",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "icon-192.png",
