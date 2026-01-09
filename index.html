@@ -178,6 +178,24 @@ const STATUS_TYPES = [
             const [newActivityName, setNewActivityName] = useState("");
             const [isDeleting, setIsDeleting] = useState(false);
 
+            const copyBackup = () => {
+    const backupData = {
+        meals: localStorage.getItem('r_meals_v9'),
+        activities: localStorage.getItem('r_act_v9'),
+        prePlan: localStorage.getItem('r_pre_v9'),
+        notes: localStorage.getItem('r_notes_v9'),
+        shoppingList: localStorage.getItem('r_shop_v9'),
+        currentDay: localStorage.getItem('r_current_day_v9'),
+        lastModule: localStorage.getItem('r_last_module_v9'),
+        lang: localStorage.getItem('r_lang_v9'),
+        mealStart: localStorage.getItem('r_meal_start_v9')
+    };
+    
+    navigator.clipboard.writeText(JSON.stringify(backupData))
+        .then(() => alert("Backup copied to clipboard!"))
+        .catch(err => console.error("Failed to copy backup", err));
+};
+            
             useEffect(() => {
     localStorage.setItem('r_meals_v9', JSON.stringify(meals));
     localStorage.setItem('r_act_v9', JSON.stringify(activities));
@@ -810,6 +828,18 @@ const STATUS_TYPES = [
                     </button>
                 </div>
             ))}
+        </div>
+        {/* COPY BACKUP BUTTON */}
+        <div className="flex justify-start pt-20 pb-10 opacity-20 hover:opacity-100 transition-opacity">
+            <button 
+                onClick={copyBackup}
+                className="p-2 text-sage-primary hover:scale-110 transition-transform"
+                title="Copy Backup"
+            >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+            </button>
         </div>
     </div>
 )}
