@@ -881,7 +881,7 @@ const STATUS_TYPES = [
                 </div>
             ))}
         </div>
-        {/* BACKUP & RESTORE BUTTONS */}
+        {/* BACKUP & RESTORE */}
 <div className="flex justify-start gap-4 pt-20 pb-10 opacity-20 hover:opacity-100 transition-opacity">
     {/* Download Button */}
     <button 
@@ -895,16 +895,26 @@ const STATUS_TYPES = [
     </button>
 
     {/* Upload Button */}
-    <button 
-        onClick={handleUpload}
-        className="p-2 text-sage-primary hover:scale-110 transition-transform"
-        title="Restore Backup"
-    >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-        </svg>
-    </button>
+    <div className="relative">
+        <input 
+            type="file" 
+            id="file-upload" 
+            accept=".json,.txt" 
+            className="hidden" 
+            onChange={handleFileUpload} 
+        />
+        <button 
+            onClick={() => document.getElementById('file-upload').click()}
+            className="p-2 text-sage-primary hover:scale-110 transition-transform"
+            title="Upload Backup File"
+        >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+        </button>
+    </div>
 </div>
+
 
     </div>
 )}
