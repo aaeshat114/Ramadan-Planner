@@ -178,6 +178,36 @@ const STATUS_TYPES = [
             const [newActivityName, setNewActivityName] = useState("");
             const [isDeleting, setIsDeleting] = useState(false);
 
+            const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        try {
+            const parsed = JSON.parse(event.target.result);
+            
+            // Updating states based on the backup structure
+            if (parsed.meals) setMeals(JSON.parse(parsed.meals));
+            if (parsed.activities) setActivities(JSON.parse(parsed.activities));
+            if (parsed.prePlan) setPrePlan(JSON.parse(parsed.prePlan));
+            if (parsed.notes) setNotes(JSON.parse(parsed.notes));
+            if (parsed.shoppingList) setShoppingList(parsed.shoppingList);
+            if (parsed.currentDay) setRamadanDay(parseInt(parsed.currentDay));
+            if (parsed.mealStart) setMealStartDay(parseInt(parsed.mealStart));
+            if (parsed.lang) setLang(parsed.lang);
+            
+            alert("Backup restored successfully from file!");
+        } catch (err) {
+            alert("Error parsing the JSON file. Please ensure it is a valid backup.");
+            console.error(err);
+        }
+    };
+    reader.readAsText(file);
+    // Reset input so the same file can be uploaded again if needed
+    e.target.value = '';
+};
+            
             const handleUpload = () => {
     const data = prompt("Paste your backup JSON here:");
     if (!data) return;
