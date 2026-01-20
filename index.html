@@ -178,6 +178,28 @@ const STATUS_TYPES = [
             const [newActivityName, setNewActivityName] = useState("");
             const [isDeleting, setIsDeleting] = useState(false);
 
+            const handleUpload = () => {
+    const data = prompt("Paste your backup JSON here:");
+    if (!data) return;
+
+    try {
+        const parsed = JSON.parse(data);
+        if (parsed.meals) setMeals(JSON.parse(parsed.meals));
+        if (parsed.activities) setActivities(JSON.parse(parsed.activities));
+        if (parsed.prePlan) setPrePlan(JSON.parse(parsed.prePlan));
+        if (parsed.notes) setNotes(JSON.parse(parsed.notes));
+        if (parsed.shoppingList) setShoppingList(parsed.shoppingList);
+        if (parsed.currentDay) setRamadanDay(parseInt(parsed.currentDay));
+        if (parsed.mealStart) setMealStartDay(parseInt(parsed.mealStart));
+        if (parsed.lang) setLang(parsed.lang);
+        
+        alert("Backup restored successfully!");
+    } catch (err) {
+        alert("Invalid backup data. Please try again.");
+        console.error(err);
+    }
+};
+            
             const copyBackup = () => {
     const backupData = {
         meals: localStorage.getItem('r_meals_v9'),
@@ -829,18 +851,31 @@ const STATUS_TYPES = [
                 </div>
             ))}
         </div>
-        {/* COPY BACKUP BUTTON */}
-        <div className="flex justify-start pt-20 pb-10 opacity-20 hover:opacity-100 transition-opacity">
-            <button 
-                onClick={copyBackup}
-                className="p-2 text-sage-primary hover:scale-110 transition-transform"
-                title="Copy Backup"
-            >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
-            </button>
-        </div>
+        {/* BACKUP & RESTORE BUTTONS */}
+<div className="flex justify-start gap-4 pt-20 pb-10 opacity-20 hover:opacity-100 transition-opacity">
+    {/* Download Button */}
+    <button 
+        onClick={copyBackup}
+        className="p-2 text-sage-primary hover:scale-110 transition-transform"
+        title="Copy Backup"
+    >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+        </svg>
+    </button>
+
+    {/* Upload Button */}
+    <button 
+        onClick={handleUpload}
+        className="p-2 text-sage-primary hover:scale-110 transition-transform"
+        title="Restore Backup"
+    >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+    </button>
+</div>
+
     </div>
 )}
 
